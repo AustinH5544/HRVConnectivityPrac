@@ -9,53 +9,68 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @StateObject private var connectivityManager = PhoneConnectivityManager.shared
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+        VStack(spacing: 20) {
+            Text("HRV Mock Data App")
+                .font(.largeTitle)
+                .padding()
+
+            if let heartRate = connectivityManager.latestHeartRate {
+                Text("Heart Rate: \(Int(heartRate)) BPM")
+                    .font(.title)
+                    .padding()
+            } else {
+                Text("Waiting for heart rate data...")
+                    .font(.title2)
+                    .padding()
+            }
+
+            if connectivityManager.events.isEmpty {
+                Text("No active events")
+                    .font(.title3)
+                    .foregroundColor(.gray)
+                    .padding()
+            } else {
+                List {
+                    ForEach(connectivityManager.events) { event in
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Event ID: \(event.id.uuidString.prefix(8))")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            Text("Start: \(event.startTime.formatted())")
+                                .font(.subheadline)
+                            Text("End: \(event.endTime.formatted())")
+                                .font(.subheadline)
+                            HStack {
+                                Button("Confirm") {
+                                    connectivityManager.sendUserResponse(event: event, isConfirmed: true)
+                                }
+                                .padding()
+                                .background(Color.green)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+
+                                Button("Dismiss") {
+                                    connectivityManager.sendUserResponse(event: event, isConfirmed: false)
+                                }
+                                .padding()
+                                .background(Color.red)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                            }
+                        }
+                        .padding()
+                        .background(Color.yellow.opacity(0.2))
+                        .cornerRadius(12)
                     }
                 }
-                .onDelete(perform: deleteItems)
+                .listStyle(PlainListStyle())
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            Spacer()
         }
+        .padding()
     }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
-    }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
