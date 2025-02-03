@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		874173E02D516B4600131B18 /* HRVWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 874173BD2D516B4400131B18 /* HRVWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		8741739D2D51677400131B18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +25,50 @@
 			remoteGlobalIDString = 874173892D51677300131B18;
 			remoteInfo = HRVConnectivityPrac;
 		};
+		874173CD2D516B4600131B18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 874173822D51677300131B18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 874173BC2D516B4400131B18;
+			remoteInfo = "HRVWatch Watch App";
+		};
+		874173D72D516B4600131B18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 874173822D51677300131B18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 874173BC2D516B4400131B18;
+			remoteInfo = "HRVWatch Watch App";
+		};
+		874173DE2D516B4600131B18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 874173822D51677300131B18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 874173BC2D516B4400131B18;
+			remoteInfo = "HRVWatch Watch App";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		874173E42D516B4600131B18 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				874173E02D516B4600131B18 /* HRVWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		8741738A2D51677300131B18 /* HRVConnectivityPrac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HRVConnectivityPrac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8741739C2D51677400131B18 /* HRVConnectivityPracTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HRVConnectivityPracTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		874173A62D51677400131B18 /* HRVConnectivityPracUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HRVConnectivityPracUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		874173BD2D516B4400131B18 /* HRVWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HRVWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		874173CC2D516B4600131B18 /* HRVWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HRVWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		874173D62D516B4600131B18 /* HRVWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HRVWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -43,6 +85,21 @@
 		874173A92D51677400131B18 /* HRVConnectivityPracUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = HRVConnectivityPracUITests;
+			sourceTree = "<group>";
+		};
+		874173BE2D516B4400131B18 /* HRVWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "HRVWatch Watch App";
+			sourceTree = "<group>";
+		};
+		874173CF2D516B4600131B18 /* HRVWatch Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "HRVWatch Watch AppTests";
+			sourceTree = "<group>";
+		};
+		874173D92D516B4600131B18 /* HRVWatch Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "HRVWatch Watch AppUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +126,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		874173BA2D516B4400131B18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		874173C92D516B4600131B18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		874173D32D516B4600131B18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +156,9 @@
 				8741738C2D51677300131B18 /* HRVConnectivityPrac */,
 				8741739F2D51677400131B18 /* HRVConnectivityPracTests */,
 				874173A92D51677400131B18 /* HRVConnectivityPracUITests */,
+				874173BE2D516B4400131B18 /* HRVWatch Watch App */,
+				874173CF2D516B4600131B18 /* HRVWatch Watch AppTests */,
+				874173D92D516B4600131B18 /* HRVWatch Watch AppUITests */,
 				8741738B2D51677300131B18 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +169,9 @@
 				8741738A2D51677300131B18 /* HRVConnectivityPrac.app */,
 				8741739C2D51677400131B18 /* HRVConnectivityPracTests.xctest */,
 				874173A62D51677400131B18 /* HRVConnectivityPracUITests.xctest */,
+				874173BD2D516B4400131B18 /* HRVWatch Watch App.app */,
+				874173CC2D516B4600131B18 /* HRVWatch Watch AppTests.xctest */,
+				874173D62D516B4600131B18 /* HRVWatch Watch AppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,10 +186,12 @@
 				874173862D51677300131B18 /* Sources */,
 				874173872D51677300131B18 /* Frameworks */,
 				874173882D51677300131B18 /* Resources */,
+				874173E42D516B4600131B18 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				874173DF2D516B4600131B18 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8741738C2D51677300131B18 /* HRVConnectivityPrac */,
@@ -163,6 +249,74 @@
 			productReference = 874173A62D51677400131B18 /* HRVConnectivityPracUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		874173BC2D516B4400131B18 /* HRVWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 874173E12D516B4600131B18 /* Build configuration list for PBXNativeTarget "HRVWatch Watch App" */;
+			buildPhases = (
+				874173B92D516B4400131B18 /* Sources */,
+				874173BA2D516B4400131B18 /* Frameworks */,
+				874173BB2D516B4400131B18 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				874173BE2D516B4400131B18 /* HRVWatch Watch App */,
+			);
+			name = "HRVWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "HRVWatch Watch App";
+			productReference = 874173BD2D516B4400131B18 /* HRVWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		874173CB2D516B4600131B18 /* HRVWatch Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 874173E52D516B4600131B18 /* Build configuration list for PBXNativeTarget "HRVWatch Watch AppTests" */;
+			buildPhases = (
+				874173C82D516B4600131B18 /* Sources */,
+				874173C92D516B4600131B18 /* Frameworks */,
+				874173CA2D516B4600131B18 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				874173CE2D516B4600131B18 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				874173CF2D516B4600131B18 /* HRVWatch Watch AppTests */,
+			);
+			name = "HRVWatch Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "HRVWatch Watch AppTests";
+			productReference = 874173CC2D516B4600131B18 /* HRVWatch Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		874173D52D516B4600131B18 /* HRVWatch Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 874173E82D516B4600131B18 /* Build configuration list for PBXNativeTarget "HRVWatch Watch AppUITests" */;
+			buildPhases = (
+				874173D22D516B4600131B18 /* Sources */,
+				874173D32D516B4600131B18 /* Frameworks */,
+				874173D42D516B4600131B18 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				874173D82D516B4600131B18 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				874173D92D516B4600131B18 /* HRVWatch Watch AppUITests */,
+			);
+			name = "HRVWatch Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "HRVWatch Watch AppUITests";
+			productReference = 874173D62D516B4600131B18 /* HRVWatch Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,6 +338,17 @@
 						CreatedOnToolsVersion = 16.1;
 						TestTargetID = 874173892D51677300131B18;
 					};
+					874173BC2D516B4400131B18 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					874173CB2D516B4600131B18 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 874173BC2D516B4400131B18;
+					};
+					874173D52D516B4600131B18 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 874173BC2D516B4400131B18;
+					};
 				};
 			};
 			buildConfigurationList = 874173852D51677300131B18 /* Build configuration list for PBXProject "HRVConnectivityPrac" */;
@@ -203,6 +368,9 @@
 				874173892D51677300131B18 /* HRVConnectivityPrac */,
 				8741739B2D51677400131B18 /* HRVConnectivityPracTests */,
 				874173A52D51677400131B18 /* HRVConnectivityPracUITests */,
+				874173BC2D516B4400131B18 /* HRVWatch Watch App */,
+				874173CB2D516B4600131B18 /* HRVWatch Watch AppTests */,
+				874173D52D516B4600131B18 /* HRVWatch Watch AppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +391,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		874173A42D51677400131B18 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		874173BB2D516B4400131B18 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		874173CA2D516B4600131B18 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		874173D42D516B4600131B18 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +442,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		874173B92D516B4400131B18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		874173C82D516B4600131B18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		874173D22D516B4600131B18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +475,21 @@
 			isa = PBXTargetDependency;
 			target = 874173892D51677300131B18 /* HRVConnectivityPrac */;
 			targetProxy = 874173A72D51677400131B18 /* PBXContainerItemProxy */;
+		};
+		874173CE2D516B4600131B18 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
+			targetProxy = 874173CD2D516B4600131B18 /* PBXContainerItemProxy */;
+		};
+		874173D82D516B4600131B18 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
+			targetProxy = 874173D72D516B4600131B18 /* PBXContainerItemProxy */;
+		};
+		874173DF2D516B4600131B18 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
+			targetProxy = 874173DE2D516B4600131B18 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -518,6 +743,144 @@
 			};
 			name = Release;
 		};
+		874173E22D516B4600131B18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HRVWatch Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = A83R25GQT7;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HRVWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = EWU.HRVConnectivityPrac;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = EWU.HRVConnectivityPrac.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Debug;
+		};
+		874173E32D516B4600131B18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HRVWatch Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = A83R25GQT7;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HRVWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = EWU.HRVConnectivityPrac;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = EWU.HRVConnectivityPrac.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Release;
+		};
+		874173E62D516B4600131B18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A83R25GQT7;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "EWU.HRVWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HRVWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HRVWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Debug;
+		};
+		874173E72D516B4600131B18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A83R25GQT7;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "EWU.HRVWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HRVWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HRVWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Release;
+		};
+		874173E92D516B4600131B18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A83R25GQT7;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "EWU.HRVWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "HRVWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Debug;
+		};
+		874173EA2D516B4600131B18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A83R25GQT7;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "EWU.HRVWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "HRVWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -553,6 +916,33 @@
 			buildConfigurations = (
 				874173B72D51677400131B18 /* Debug */,
 				874173B82D51677400131B18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		874173E12D516B4600131B18 /* Build configuration list for PBXNativeTarget "HRVWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				874173E22D516B4600131B18 /* Debug */,
+				874173E32D516B4600131B18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		874173E52D516B4600131B18 /* Build configuration list for PBXNativeTarget "HRVWatch Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				874173E62D516B4600131B18 /* Debug */,
+				874173E72D516B4600131B18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		874173E82D516B4600131B18 /* Build configuration list for PBXNativeTarget "HRVWatch Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				874173E92D516B4600131B18 /* Debug */,
+				874173EA2D516B4600131B18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
