@@ -2,24 +2,27 @@ import SwiftUI
 import HealthKit
 
 struct ContentView: View {
-    private let healthKitManager = HealthKitManager()
+    private let healthKitManager = HealthKitManager() // for live data
     @EnvironmentObject var mockDataSender: MockDataSender
-    @State private var isStreaming = false
     @State private var heartRate: Double?
     @State private var errorMessage: String?
-
-    init() {
-        healthKitManager.isMockMode = true // Enable mock mode for testing
+    
+    // Toggle this flag to choose between mock and live data:
+    private let useMockData: Bool = false  // Set to false to use live heart rate data.
+    
+    // Pick the data source based on the flag.
+    private var displayedHeartRate: Double? {
+        mockDataSender.shouldSimulate ? mockDataSender.currentHeartRate : heartRate
     }
-
+    
     var body: some View {
         VStack {
             Text("Heart Rate")
                 .font(.headline)
                 .padding()
-
-            if let heartRate = mockDataSender.currentHeartRate {
-                Text("\(Int(heartRate)) BPM")
+            
+            if let currentRate = displayedHeartRate {
+                Text("\(Int(currentRate)) BPM")
                     .font(.largeTitle)
                     .foregroundColor(.red)
                     .padding()
@@ -35,7 +38,7 @@ struct ContentView: View {
                     .padding()
             }
             
-            // Button to navigate to event list
+            // Button to navigate to event list.
             Button(action: { mockDataSender.showEventList = true }) {
                 Text("Events (\(mockDataSender.events.count))")
                     .font(.subheadline)
@@ -46,14 +49,22 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            requestAuthorization()
+            if useMockData {
+                // In mock mode, ensure the simulation is enabled and start the timer.
+                mockDataSender.shouldSimulate = true
+                mockDataSender.startStreamingHeartRate()
+            } else {
+                // In live mode, turn off mock simulation and start live updates.
+                mockDataSender.stopStreamingHeartRate()
+                requestAuthorization()
+            }
         }
         .sheet(isPresented: $mockDataSender.showEventList) {
             EventListView()
                 .environmentObject(mockDataSender)
         }
     }
-
+    
     private func requestAuthorization() {
         healthKitManager.requestAuthorization { success, error in
             if success {
@@ -69,7 +80,7 @@ struct ContentView: View {
             }
         }
     }
-
+    
     private func startLiveUpdates() {
         healthKitManager.startLiveHeartRateUpdates { rate, error in
             DispatchQueue.main.async {

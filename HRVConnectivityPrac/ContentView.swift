@@ -1,22 +1,19 @@
-//
-//  ContentView.swift
-//  HRVConnectivityPrac
-//
-//  Created by Austin Harrison on 2/3/25.
-//
-
 import SwiftUI
 import SwiftData
 
 struct ContentView: View {
     @StateObject private var connectivityManager = PhoneConnectivityManager.shared
+    
+    // New state variable to keep track of which mode we want.
+    @State private var isMockMode: Bool = true
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("HRV Mock Data App")
+            Text("HRV Connectivity App")
                 .font(.largeTitle)
                 .padding()
 
+            // Display the latest heart rate received from the watch.
             if let heartRate = connectivityManager.latestHeartRate {
                 Text("Heart Rate: \(Int(heartRate)) BPM")
                     .font(.title)
@@ -26,7 +23,23 @@ struct ContentView: View {
                     .font(.title2)
                     .padding()
             }
-
+            
+            // Mode Toggle Button
+            Button(action: {
+                // Toggle the mode.
+                isMockMode.toggle()
+                // Send the new mode to the watch.
+                connectivityManager.sendModeChange(isMockMode: isMockMode)
+            }) {
+                Text(isMockMode ? "Switch to Live Mode" : "Switch to Mock Mode")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(isMockMode ? Color.blue : Color.green)
+                    .cornerRadius(8)
+            }
+            
+            // ... (rest of your UI, e.g. events list)
             if connectivityManager.events.isEmpty {
                 Text("No active events")
                     .font(.title3)
@@ -51,7 +64,7 @@ struct ContentView: View {
                                 .background(Color.green)
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
-
+                                
                                 Button("Dismiss") {
                                     connectivityManager.sendUserResponse(event: event, isConfirmed: false)
                                 }
@@ -68,9 +81,12 @@ struct ContentView: View {
                 }
                 .listStyle(PlainListStyle())
             }
-
             Spacer()
         }
         .padding()
     }
+}
+
+#Preview {
+    ContentView()
 }

@@ -144,4 +144,19 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
             print("Event dismissed.")
         }
     }
+
+    func sendModeChange(isMockMode: Bool) {
+        guard WCSession.default.isReachable else {
+            print("Watch is not reachable")
+            return
+        }
+        
+        let modeMessage: [String: Any] = ["isMockMode": isMockMode]
+        WCSession.default.sendMessage(modeMessage, replyHandler: nil) { error in
+            print("Failed to send mode change: \(error.localizedDescription)")
+        }
+        
+        print("Sent mode change: \(isMockMode ? "Mock" : "Live")")
+    }
+
 }
