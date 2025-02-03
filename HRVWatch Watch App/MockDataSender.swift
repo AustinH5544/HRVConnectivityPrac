@@ -7,9 +7,7 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     @Published var currentHeartRate: Double?
     @Published var events: [Event] = []
     @Published var showEventList: Bool = false
-    
-    // This property controls whether mock simulation should run.
-    @Published var shouldSimulate: Bool = true
+    @Published var shouldSimulate: Bool = true  // controls whether simulation is running
     
     private var heartRateTimer: Timer?
     private var baseHeartRate: Double = 75.0
@@ -21,8 +19,6 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     private override init() {
         super.init()
         activateSession()
-        // Do not call startStreamingHeartRate() here;
-        // let the ContentView/App decide when to start simulation.
     }
     
     private func activateSession() {
@@ -36,10 +32,7 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     }
     
     func startStreamingHeartRate() {
-        // Only start if simulation is enabled.
-        guard shouldSimulate else { return }
-        // Avoid creating multiple timers.
-        if heartRateTimer != nil { return }
+        guard shouldSimulate, heartRateTimer == nil else { return }
         heartRateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.generateAndSendHeartRate()
         }
@@ -51,7 +44,6 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     }
     
     private func generateAndSendHeartRate() {
-        // If simulation has been disabled mid-run, do nothing.
         guard shouldSimulate else { return }
         
         let variability = Double.random(in: -3...3)
@@ -66,11 +58,9 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
         let realisticHeartRate = max(60, min(90, baseHeartRate))
         currentHeartRate = realisticHeartRate
         
-        if realisticHeartRate > threshold {
-            if activeEvent == nil {
-                startEvent()
-            }
-        } else {
+        if realisticHeartRate > threshold, activeEvent == nil {
+            startEvent()
+        } else if realisticHeartRate <= threshold, activeEvent != nil {
             endEventIfNeeded()
         }
         
@@ -78,7 +68,7 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     }
     
     private func startEvent() {
-        if activeEvent != nil { return } // Prevent duplicate events.
+        guard activeEvent == nil else { return }
         let eventID = UUID()
         let newEvent = Event(id: eventID, startTime: Date(), endTime: Date(), isConfirmed: nil)
         activeEvent = newEvent
@@ -99,12 +89,12 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
             print("iPhone is not reachable")
             return
         }
-        let isoDateFormatter = ISO8601DateFormatter()
+        let isoFormatter = ISO8601DateFormatter()
         let eventData: [String: Any] = [
             "Event": "EventEnded",
             "EventID": event.id.uuidString,
-            "StartTime": isoDateFormatter.string(from: event.startTime),
-            "EndTime": isoDateFormatter.string(from: event.endTime)
+            "StartTime": isoFormatter.string(from: event.startTime),
+            "EndTime": isoFormatter.string(from: event.endTime)
         ]
         WCSession.default.sendMessage(eventData, replyHandler: nil) { error in
             print("Failed to send event end data: \(error.localizedDescription)")
@@ -148,7 +138,6 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
         WCSession.default.sendMessage(data, replyHandler: nil) { error in
             print("Failed to send heart rate data: \(error.localizedDescription)")
         }
-        
         print("Sent heart rate: \(heartRate) BPM")
     }
     
@@ -156,9 +145,7 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
         DispatchQueue.main.async {
-            // Check for a mode change message.
             if let mode = message["isMockMode"] as? Bool {
-                // Update the mock simulation flag.
                 self.shouldSimulate = mode
                 if mode {
                     self.startStreamingHeartRate()
@@ -168,10 +155,9 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
                     print("Switched to Live Mode")
                 }
             }
-            
-            // Existing handling for events...
-            if let event = message["Event"] as? String, event == "EventHandled",
-               let eventID = message["EventID"] as? String, let uuid = UUID(uuidString: eventID) {
+            if let eventAction = message["Event"] as? String, eventAction == "EventHandled",
+               let eventID = message["EventID"] as? String,
+               let uuid = UUID(uuidString: eventID) {
                 self.events.removeAll { $0.id == uuid }
                 print("Event \(uuid) removed from watch")
             }

@@ -1,11 +1,9 @@
 import SwiftUI
-import SwiftData
+// (Remove SwiftData if not using it throughout your project.)
 
 struct ContentView: View {
     @StateObject private var connectivityManager = PhoneConnectivityManager.shared
-    
-    // New state variable to keep track of which mode we want.
-    @State private var isMockMode: Bool = true
+    @State private var isMockMode: Bool = true  // local state for toggling the mode
 
     var body: some View {
         VStack(spacing: 20) {
@@ -13,7 +11,6 @@ struct ContentView: View {
                 .font(.largeTitle)
                 .padding()
 
-            // Display the latest heart rate received from the watch.
             if let heartRate = connectivityManager.latestHeartRate {
                 Text("Heart Rate: \(Int(heartRate)) BPM")
                     .font(.title)
@@ -26,9 +23,7 @@ struct ContentView: View {
             
             // Mode Toggle Button
             Button(action: {
-                // Toggle the mode.
                 isMockMode.toggle()
-                // Send the new mode to the watch.
                 connectivityManager.sendModeChange(isMockMode: isMockMode)
             }) {
                 Text(isMockMode ? "Switch to Live Mode" : "Switch to Mock Mode")
@@ -39,7 +34,6 @@ struct ContentView: View {
                     .cornerRadius(8)
             }
             
-            // ... (rest of your UI, e.g. events list)
             if connectivityManager.events.isEmpty {
                 Text("No active events")
                     .font(.title3)

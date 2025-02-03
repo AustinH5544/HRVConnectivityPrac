@@ -1,12 +1,4 @@
-//
-//  HRVConnectivityPracApp.swift
-//  HRVConnectivityPrac
-//
-//  Created by Austin Harrison on 2/3/25.
-//
-
 import SwiftUI
-import SwiftData
 
 @main
 struct HRVMockTestApp: App {

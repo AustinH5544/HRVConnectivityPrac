@@ -2,15 +2,12 @@ import SwiftUI
 import HealthKit
 
 struct ContentView: View {
-    private let healthKitManager = HealthKitManager() // for live data
+    private let healthKitManager = HealthKitManager() // used for live data
     @EnvironmentObject var mockDataSender: MockDataSender
     @State private var heartRate: Double?
     @State private var errorMessage: String?
     
-    // Toggle this flag to choose between mock and live data:
-    private let useMockData: Bool = false  // Set to false to use live heart rate data.
-    
-    // Pick the data source based on the flag.
+    // Display data based on the simulation flag from MockDataSender.
     private var displayedHeartRate: Double? {
         mockDataSender.shouldSimulate ? mockDataSender.currentHeartRate : heartRate
     }
@@ -38,7 +35,7 @@ struct ContentView: View {
                     .padding()
             }
             
-            // Button to navigate to event list.
+            // Button to show events.
             Button(action: { mockDataSender.showEventList = true }) {
                 Text("Events (\(mockDataSender.events.count))")
                     .font(.subheadline)
@@ -49,12 +46,9 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            if useMockData {
-                // In mock mode, ensure the simulation is enabled and start the timer.
-                mockDataSender.shouldSimulate = true
+            if mockDataSender.shouldSimulate {
                 mockDataSender.startStreamingHeartRate()
             } else {
-                // In live mode, turn off mock simulation and start live updates.
                 mockDataSender.stopStreamingHeartRate()
                 requestAuthorization()
             }

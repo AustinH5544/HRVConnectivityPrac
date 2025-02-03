@@ -1,10 +1,3 @@
-//
-//  EventListView.swift
-//  HRVConnectivityPrac
-//
-//  Created by Tyler Woody on 2/3/25.
-//
-
 import SwiftUI
 
 struct EventListView: View {
@@ -22,7 +15,6 @@ struct EventListView: View {
                             .font(.subheadline)
                         Text("End: \(event.endTime.formatted())")
                             .font(.subheadline)
-
                         HStack {
                             Button("Confirm") {
                                 mockDataSender.handleUserResponse(event: event, isConfirmed: true)
@@ -31,7 +23,7 @@ struct EventListView: View {
                             .background(Color.green)
                             .foregroundColor(.white)
                             .cornerRadius(10)
-
+                            
                             Button("Dismiss") {
                                 mockDataSender.handleUserResponse(event: event, isConfirmed: false)
                             }
