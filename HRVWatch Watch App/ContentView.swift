@@ -3,6 +3,8 @@ import HealthKit
 
 struct ContentView: View {
     private let healthKitManager = HealthKitManager()
+    @EnvironmentObject var mockDataSender: MockDataSender
+    @State private var isStreaming = false
     @State private var heartRate: Double?
     @State private var errorMessage: String?
 
@@ -16,7 +18,7 @@ struct ContentView: View {
                 .font(.headline)
                 .padding()
 
-            if let heartRate = heartRate {
+            if let heartRate = mockDataSender.currentHeartRate {
                 Text("\(Int(heartRate)) BPM")
                     .font(.largeTitle)
                     .foregroundColor(.red)
@@ -32,9 +34,23 @@ struct ContentView: View {
                     .foregroundColor(.gray)
                     .padding()
             }
+            
+            // Button to navigate to event list
+            Button(action: { mockDataSender.showEventList = true }) {
+                Text("Events (\(mockDataSender.events.count))")
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Color.blue)
+                    .cornerRadius(8)
+            }
         }
         .onAppear {
             requestAuthorization()
+        }
+        .sheet(isPresented: $mockDataSender.showEventList) {
+            EventListView()
+                .environmentObject(mockDataSender)
         }
     }
 

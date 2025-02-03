@@ -84,7 +84,6 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
             }
         }
     }
-
     
     func sendUserResponse(event: Event, isConfirmed: Bool) {
         guard WCSession.default.isReachable else {

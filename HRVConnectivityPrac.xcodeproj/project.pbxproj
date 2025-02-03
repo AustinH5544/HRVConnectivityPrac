@@ -77,7 +77,6 @@
 			membershipExceptions = (
 				Event.swift,
 				HealthKitManager.swift,
-				PhoneConnectivityManager.swift,
 			);
 			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
 		};
