@@ -71,6 +71,16 @@
 		874173D62D516B4600131B18 /* HRVWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HRVWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		874174182D516C7D00131B18 /* Exceptions for "Shared" folder in "HRVWatch Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HealthKitManager.swift,
+			);
+			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8741738C2D51677300131B18 /* HRVConnectivityPrac */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -100,6 +110,14 @@
 		874173D92D516B4600131B18 /* HRVWatch Watch AppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "HRVWatch Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		874173EB2D516BA800131B18 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				874174182D516C7D00131B18 /* Exceptions for "Shared" folder in "HRVWatch Watch App" target */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -153,6 +171,7 @@
 		874173812D51677300131B18 = {
 			isa = PBXGroup;
 			children = (
+				874173EB2D516BA800131B18 /* Shared */,
 				8741738C2D51677300131B18 /* HRVConnectivityPrac */,
 				8741739F2D51677400131B18 /* HRVConnectivityPracTests */,
 				874173A92D51677400131B18 /* HRVConnectivityPracUITests */,
@@ -195,6 +214,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				8741738C2D51677300131B18 /* HRVConnectivityPrac */,
+				874173EB2D516BA800131B18 /* Shared */,
 			);
 			name = HRVConnectivityPrac;
 			packageProductDependencies = (
