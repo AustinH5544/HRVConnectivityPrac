@@ -22,17 +22,17 @@ struct ContentView: View {
             }
             
             // Mode Toggle Button
-            Button(action: {
-                isMockMode.toggle()
-                connectivityManager.sendModeChange(isMockMode: isMockMode)
-            }) {
-                Text(isMockMode ? "Switch to Live Mode" : "Switch to Mock Mode")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(isMockMode ? Color.blue : Color.green)
-                    .cornerRadius(8)
-            }
+//            Button(action: {
+//                isMockMode.toggle()
+//                connectivityManager.sendModeChange(isMockMode: isMockMode)
+//            }) {
+//                Text(isMockMode ? "Switch to Live Mode" : "Switch to Mock Mode")
+//                    .font(.headline)
+//                    .foregroundColor(.white)
+//                    .padding()
+//                    .background(isMockMode ? Color.blue : Color.green)
+//                    .cornerRadius(8)
+//            }
             
             if connectivityManager.events.isEmpty {
                 Text("No active events")
