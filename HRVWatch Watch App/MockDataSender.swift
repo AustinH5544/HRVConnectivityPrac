@@ -9,10 +9,14 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     @Published var showEventList: Bool = false
     @Published var shouldSimulate: Bool = true  // controls whether simulation is running
     
+    // Existing properties for simulation
     private var heartRateTimer: Timer?
     private var baseHeartRate: Double = 75.0
     private var isIncreasing = true
-    private let threshold: Double = 85.0
+    
+    // New: HRVCalculator instance and an RMSSD threshold (example value)
+    private let hrvCalculator = HRVCalculator()
+    private let rmssdThreshold: Double = 30.0 // adjust this threshold based on your needs
     
     private var activeEvent: Event?
     
@@ -43,27 +47,42 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
         heartRateTimer = nil
     }
     
+    /// Updated method: generate a simulated heart rate, feed it to HRVCalculator,
+    /// and trigger events based on RMSSD.
     private func generateAndSendHeartRate() {
         guard shouldSimulate else { return }
         
-        let variability = Double.random(in: -3...3)
+        // Simulate heart rate fluctuations
+        let variability = Double.random(in: -5...5)
         if isIncreasing {
             baseHeartRate += 1.0 + variability
-            if baseHeartRate > 90 { isIncreasing = false }
+            if baseHeartRate > 120 { isIncreasing = false }
         } else {
             baseHeartRate -= 1.0 + variability
-            if baseHeartRate < 60 { isIncreasing = true }
+            if baseHeartRate < 40 { isIncreasing = true }
         }
         
-        let realisticHeartRate = max(60, min(90, baseHeartRate))
+        let realisticHeartRate = max(40, min(120, baseHeartRate))
         currentHeartRate = realisticHeartRate
         
-        if realisticHeartRate > threshold, activeEvent == nil {
-            startEvent()
-        } else if realisticHeartRate <= threshold, activeEvent != nil {
-            endEventIfNeeded()
+        // Feed the new beat into the HRV calculator.
+        // HRVCalculator uses a rolling window (default 5 minutes) to compute metrics.
+        hrvCalculator.addBeat(heartRate: realisticHeartRate, at: Date())
+        
+        print("Current RMSSD: \(hrvCalculator.rmssd ?? 0)")
+
+        
+        // Check RMSSD to decide whether to start or end an event.
+        if let currentRMSSD = hrvCalculator.rmssd {
+            // For example, trigger an event when RMSSD is low.
+            if currentRMSSD < rmssdThreshold, activeEvent == nil {
+                startEvent()
+            } else if currentRMSSD >= rmssdThreshold, activeEvent != nil {
+                endEventIfNeeded()
+            }
         }
         
+        // Send the simulated heart rate data to the iPhone via WatchConnectivity.
         sendHeartRateData(heartRate: realisticHeartRate)
     }
     
@@ -73,6 +92,7 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
         let newEvent = Event(id: eventID, startTime: Date(), endTime: Date(), isConfirmed: nil)
         activeEvent = newEvent
         print("New event started: \(newEvent.id)")
+        // Optionally: send event start data if needed
     }
     
     private func endEventIfNeeded() {
