@@ -6,10 +6,25 @@ struct ContentView: View {
     @EnvironmentObject var mockDataSender: MockDataSender
     @State private var heartRate: Double?
     @State private var errorMessage: String?
+    @State private var lastUpdate: Date?
+
     
     // Display data based on the simulation flag from MockDataSender.
-    private var displayedHeartRate: Double? {
-        mockDataSender.shouldSimulate ? mockDataSender.currentHeartRate : heartRate
+    private var displayedHeartRate: String {
+        if mockDataSender.shouldSimulate {
+            if let rate = mockDataSender.currentHeartRate {
+                return "\(Int(rate)) BPM"
+            } else {
+                return "-"
+            }
+        } else {
+            // For live data, if no update was received in the last 30 seconds, show a placeholder.
+            if let lastUpdate = lastUpdate, Date().timeIntervalSince(lastUpdate) < 30, let rate = heartRate {
+                return "\(Int(rate)) BPM"
+            } else {
+                return "No live data"
+            }
+        }
     }
     
     var body: some View {
@@ -17,23 +32,10 @@ struct ContentView: View {
             Text("Heart Rate")
                 .font(.headline)
                 .padding()
-            
-            if let currentRate = displayedHeartRate {
-                Text("\(Int(currentRate)) BPM")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-                    .padding()
-            } else if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .font(.body)
-                    .foregroundColor(.gray)
-                    .padding()
-            } else {
-                Text("Waiting for heart rate...")
-                    .font(.body)
-                    .foregroundColor(.gray)
-                    .padding()
-            }
+            Text(displayedHeartRate)
+                .font(.largeTitle)
+                .foregroundColor(.red)
+                .padding()
             
             // Button to show events.
             Button(action: { mockDataSender.showEventList = true }) {
@@ -82,6 +84,8 @@ struct ContentView: View {
                     self.errorMessage = "Failed to get live updates: \(error.localizedDescription)"
                 } else if let rate = rate {
                     self.heartRate = rate
+                    self.lastUpdate = Date()
+                    self.mockDataSender.sendHeartRateData(heartRate: rate)
                 } else {
                     self.errorMessage = "No heart rate data available."
                 }

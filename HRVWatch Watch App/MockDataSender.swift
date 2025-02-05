@@ -144,7 +144,7 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
         print("Sent event confirmation for \(event.id)")
     }
     
-    private func sendHeartRateData(heartRate: Double) {
+    func sendHeartRateData(heartRate: Double) {
         guard WCSession.default.isReachable else {
             print("iPhone is not reachable")
             return
