@@ -59,6 +59,20 @@ class HRVCalculator: ObservableObject {
         return sqrt(variance)
     }
     
+    /// pnn50 is defined as the percentage of successive heartbeat (RR) intervals that differ by more than 50 ms.
+    var pnn50: Double? {
+        let ibis = beats.map { $0.ibi }
+        guard ibis.count > 1 else { return nil }
+        
+        // Count the number of successive differences greater than 50 ms.
+        let count = (1..<ibis.count).reduce(0) { (sum, i) in
+            let diff = abs(ibis[i] - ibis[i - 1])
+            return sum + (diff > 50 ? 1 : 0)
+        }
+        
+        return (Double(count) / Double(ibis.count - 1)) * 100.0
+    }
+    
     /// Adds a new beat to the rolling window.
     /// This function also prunes any beats older than the window size.
     func addBeat(heartRate: Double, at timestamp: Date = Date()) {
