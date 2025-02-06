@@ -2,7 +2,7 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="23G93" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="HRVData" representedClassName="HRVData" syncable="YES" codeGenerationType="class">
         <attribute name="creationData" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="heartBeats" optional="YES" attributeType="Transformable">
+        <attribute name="heartBeats" optional="YES" attributeType="Transformable" customClassName="NSArray">
             <userInfo>
                 <entry key="NSValueTransformerName" value="NSSecureUnarchiveFromDataTransformerName"/>
             </userInfo>
