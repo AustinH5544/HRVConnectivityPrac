@@ -7,7 +7,7 @@ struct ContentView: View {
     @State private var heartRate: Double?
     @State private var errorMessage: String?
     @State private var lastUpdate: Date?
-
+    @State private var currentTime = Date()
     
     // Display data based on the simulation flag from MockDataSender.
     private var displayedHeartRate: String {
@@ -19,10 +19,10 @@ struct ContentView: View {
             }
         } else {
             // For live data, if no update was received in the last 30 seconds, show a placeholder.
-            if let lastUpdate = lastUpdate, Date().timeIntervalSince(lastUpdate) < 30, let rate = heartRate {
+            if let lastUpdate = lastUpdate, currentTime.timeIntervalSince(lastUpdate) < 30, let rate = heartRate {
                 return "\(Int(rate)) BPM"
             } else {
-                return "No live data"
+                return "-"
             }
         }
     }
@@ -54,6 +54,9 @@ struct ContentView: View {
                 mockDataSender.stopStreamingHeartRate()
                 requestAuthorization()
             }
+        }
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) {
+            now in self.currentTime = now
         }
         .sheet(isPresented: $mockDataSender.showEventList) {
             EventListView()
