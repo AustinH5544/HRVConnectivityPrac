@@ -9,17 +9,31 @@ import Foundation
 import CoreData
 
 extension HRVData {
-    // Add your custom methods here
-    func customMethod() {
-        // Your code here
+    // Convenience initializer to set up a new HRVData record.
+    convenience init(context: NSManagedObjectContext, sdnn: Double, rmssd: Double, pnn50: Double, heartBeats: [Double], creationDate: Date = Date()) {
+        self.init(context: context)
+        self.id = UUID()
+        self.creationDate = creationDate
+        self.sdnn = sdnn
+        self.rmssd = rmssd
+        self.pnn50 = pnn50
+        self.heartBeats = heartBeats as NSArray
     }
     
-    // For example, a computed property:
-    var formattedCreationDate: String {
-        guard let date = self.creationData else { return "Unknown Date" }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+    // Convert this record into the cloud request model.
+    func toCloudRequest(authInfo: AddHRVDataRequest.AuthInfo, flags: AddHRVDataRequest.Flags, personalData: AddHRVDataRequest.PersonalData) -> AddHRVDataRequest? {
+        guard let creationDate = self.creationDate else { return nil }
+        // Build HRVInfo from this HRVData instance.
+        let hrvInfo = AddHRVDataRequest.HRVInfo(sdnn: self.sdnn,
+                                                rmssd: self.rmssd,
+                                                pnn50: self.pnn50,
+                                                heartBeats: self.heartBeats as? [Double] ?? [])
+        let requestData = AddHRVDataRequest.RequestData(authInfo: authInfo,
+                                                        type: "AddData",
+                                                        creationDate: creationDate,
+                                                        hrvInfo: hrvInfo,
+                                                        flags: flags,
+                                                        personalData: personalData)
+        return AddHRVDataRequest(requestData: requestData)
     }
 }
