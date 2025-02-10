@@ -72,6 +72,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2895E3A82D5AC62F00FFD2F5 /* Exceptions for "Shared" folder in "HRVConnectivityPrac" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HealthKitManager.swift,
+			);
+			target = 874173892D51677300131B18 /* HRVConnectivityPrac */;
+		};
 		874174182D516C7D00131B18 /* Exceptions for "Shared" folder in "HRVWatch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -117,6 +124,7 @@
 		874173EB2D516BA800131B18 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				2895E3A82D5AC62F00FFD2F5 /* Exceptions for "Shared" folder in "HRVConnectivityPrac" target */,
 				874174182D516C7D00131B18 /* Exceptions for "Shared" folder in "HRVWatch Watch App" target */,
 			);
 			path = Shared;

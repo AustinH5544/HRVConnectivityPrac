@@ -2,14 +2,19 @@ import SwiftUI
 import HealthKit
 
 struct ContentView: View {
-    private let healthKitManager = HealthKitManager() // used for live data
+    // Use the workout-enabled HealthKitManager for live data
+    private let healthKitManager = HealthKitManager()
+    
+    // We still use the mockDataSender to manage events and simulation.
     @EnvironmentObject var mockDataSender: MockDataSender
+    
     @State private var heartRate: Double?
     @State private var errorMessage: String?
     @State private var lastUpdate: Date?
     @State private var currentTime = Date()
     
-    // Display data based on the simulation flag from MockDataSender.
+    // Computed property that displays the heart rate if updated in the last 30 seconds,
+    // otherwise shows a placeholder.
     private var displayedHeartRate: String {
         if mockDataSender.shouldSimulate {
             if let rate = mockDataSender.currentHeartRate {
@@ -18,7 +23,6 @@ struct ContentView: View {
                 return "-"
             }
         } else {
-            // For live data, if no update was received in the last 30 seconds, show a placeholder.
             if let lastUpdate = lastUpdate, currentTime.timeIntervalSince(lastUpdate) < 30, let rate = heartRate {
                 return "\(Int(rate)) BPM"
             } else {
@@ -49,25 +53,40 @@ struct ContentView: View {
         }
         .onAppear {
             if mockDataSender.shouldSimulate {
+                // Use mock data simulation.
                 mockDataSender.startStreamingHeartRate()
             } else {
+                // For live data, ensure mock simulation is stopped,
+                // then request authorization and start the workout.
                 mockDataSender.stopStreamingHeartRate()
-                requestAuthorization()
+                requestAuthorizationAndStartWorkout()
             }
         }
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) {
-            now in self.currentTime = now
+        // Update currentTime every second so the UI refreshes appropriately.
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { now in
+            self.currentTime = now
         }
         .sheet(isPresented: $mockDataSender.showEventList) {
-            EventListView()
-                .environmentObject(mockDataSender)
+            EventListView().environmentObject(mockDataSender)
         }
     }
     
-    private func requestAuthorization() {
+    // This function requests HealthKit authorization and starts a workout session
+    // to receive live heart rate updates.
+    private func requestAuthorizationAndStartWorkout() {
         healthKitManager.requestAuthorization { success, error in
             if success {
-                startLiveUpdates()
+                DispatchQueue.main.async {
+                    // Set the callback for heart rate updates from the workout.
+                    healthKitManager.onHeartRateUpdate = { newRate in
+                        DispatchQueue.main.async {
+                            self.heartRate = newRate
+                            self.lastUpdate = Date()
+                        }
+                    }
+                    // Start the workout session, which puts the app in workout state.
+                    healthKitManager.startWorkout()
+                }
             } else if let error = error {
                 DispatchQueue.main.async {
                     self.errorMessage = "Authorization failed: \(error.localizedDescription)"
@@ -75,22 +94,6 @@ struct ContentView: View {
             } else {
                 DispatchQueue.main.async {
                     self.errorMessage = "Authorization not granted."
-                }
-            }
-        }
-    }
-    
-    private func startLiveUpdates() {
-        healthKitManager.startLiveHeartRateUpdates { rate, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.errorMessage = "Failed to get live updates: \(error.localizedDescription)"
-                } else if let rate = rate {
-                    self.heartRate = rate
-                    self.lastUpdate = Date()
-                    self.mockDataSender.sendHeartRateData(heartRate: rate)
-                } else {
-                    self.errorMessage = "No heart rate data available."
                 }
             }
         }
