@@ -76,7 +76,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Event.swift,
-				HealthKitManager.swift,
 				HRVCalculator.swift,
 			);
 			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
