@@ -14,6 +14,7 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     @Published var eventStartTime: Date? = nil
     @Published var eventEndTime: Date? = nil
     @Published var eventMessage: String? = nil
+    @Published var hrvCalculator = HRVCalculator()
 
     private override init() {
         super.init()
@@ -50,6 +51,7 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
         DispatchQueue.main.async {
             if let heartRate = message["HeartRate"] as? Double {
                 self.latestHeartRate = heartRate
+                self.hrvCalculator.addBeat(heartRate: heartRate, at: Date())
                 print("📲 ✅ Received heart rate from Watch: \(heartRate) BPM")
             }
         }

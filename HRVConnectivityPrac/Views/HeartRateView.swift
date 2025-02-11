@@ -3,7 +3,6 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var connectivityManager = PhoneConnectivityManager.shared
-    @State private var isMockMode: Bool = true  // local state for toggling the mode
 
     var body: some View {
         VStack(spacing: 20) {
@@ -21,18 +20,20 @@ struct ContentView: View {
                     .padding()
             }
             
-            // Mode Toggle Button
-//            Button(action: {
-//                isMockMode.toggle()
-//                connectivityManager.sendModeChange(isMockMode: isMockMode)
-//            }) {
-//                Text(isMockMode ? "Switch to Live Mode" : "Switch to Mock Mode")
-//                    .font(.headline)
-//                    .foregroundColor(.white)
-//                    .padding()
-//                    .background(isMockMode ? Color.blue : Color.green)
-//                    .cornerRadius(8)
-//            }
+            if let rmssd = connectivityManager.hrvCalculator.rmssd,
+                let sdnn = connectivityManager.hrvCalculator.sdnn,
+                let pnn50 = connectivityManager.hrvCalculator.pnn50 {
+                    VStack(spacing: 5) {
+                        Text("RMSSD: \(String(format: "%.1f", rmssd)) ms")
+                        Text("SDNN: \(String(format: "%.1f", sdnn)) ms")
+                        Text("PNN50: \(String(format: "%.1f", pnn50))%")
+                }
+                .font(.headline)
+                .padding()
+            } else {
+                Text("Calculating HRV statistics...")
+                    .font(.headline)
+            }
             
             if connectivityManager.events.isEmpty {
                 Text("No active events")
