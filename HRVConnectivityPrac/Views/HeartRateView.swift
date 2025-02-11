@@ -11,7 +11,7 @@ struct ContentView: View {
                 .padding()
 
             if let heartRate = connectivityManager.latestHeartRate {
-                Text("Heart Rate: \(Int(heartRate)) BPM")
+                Text("Heart Rate: \(Int(heartRate)) BPM!!!!!!!")
                     .font(.title)
                     .padding()
             } else {
