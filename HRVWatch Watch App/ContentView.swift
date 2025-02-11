@@ -8,91 +8,107 @@ struct ContentView: View {
     @State private var errorMessage: String?
     @State private var lastUpdate: Date?
     @State private var currentTime = Date()
+    @State private var isWorkoutRunning: Bool = false
     
     // Display data based on the simulation flag from MockDataSender.
     private var displayedHeartRate: String {
         if mockDataSender.shouldSimulate {
-            if let rate = mockDataSender.currentHeartRate {
-                return "\(Int(rate)) BPM"
-            } else {
-                return "-"
-            }
+            return mockDataSender.currentHeartRate.map { "\(Int($0)) BPM" } ?? "-"
         } else {
-            // For live data, if no update was received in the last 30 seconds, show a placeholder.
-            if let lastUpdate = lastUpdate, currentTime.timeIntervalSince(lastUpdate) < 30, let rate = heartRate {
+            if let lastUpdate = lastUpdate, currentTime.timeIntervalSince(lastUpdate) < 10, let rate = heartRate {
                 return "\(Int(rate)) BPM"
             } else {
-                return "-"
+                return "Waiting..."
             }
         }
     }
+
     
     var body: some View {
-        VStack {
-            Text("Heart Rate")
-                .font(.headline)
-                .padding()
-            Text(displayedHeartRate)
-                .font(.largeTitle)
-                .foregroundColor(.red)
-                .padding()
-            
-            // Button to show events.
-            Button(action: { mockDataSender.showEventList = true }) {
-                Text("Events (\(mockDataSender.events.count))")
+            VStack {
+                Text("Heart Rate")
+                    .font(.headline)
+                    .padding()
+                
+                Text(displayedHeartRate)
+                    .font(.largeTitle)
+                    .foregroundColor(.red)
+                    .padding()
+                
+                Text(isWorkoutRunning ? "🏃‍♂️ Workout Active" : "⏹ Workout Stopped")
                     .font(.subheadline)
-                    .foregroundColor(.white)
-                    .padding(8)
-                    .background(Color.blue)
-                    .cornerRadius(8)
+                    .foregroundColor(isWorkoutRunning ? .green : .gray)
+                
+                // Show Events Button
+                Button(action: { mockDataSender.showEventList = true }) {
+                    Text("Events (\(mockDataSender.events.count))")
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                }
+            }
+            .onAppear {
+                if mockDataSender.shouldSimulate {
+                    mockDataSender.startStreamingHeartRate()
+                } else {
+                    mockDataSender.stopStreamingHeartRate()
+                    
+                    healthKitManager.requestAuthorization { success, error in
+                        if success {
+                            healthKitManager.startLiveHeartRateUpdates { rate, error in
+                                DispatchQueue.main.async {
+                                    if let error = error {
+                                        self.errorMessage = "Failed to get live updates: \(error.localizedDescription)"
+                                    } else if let rate = rate {
+                                        self.heartRate = rate
+                                        self.lastUpdate = Date()
+                                        self.mockDataSender.sendHeartRateData(heartRate: rate)
+                                    } else {
+                                        self.errorMessage = "No heart rate data available."
+                                    }
+                                }
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.errorMessage = "Authorization failed: \(error?.localizedDescription ?? "Unknown reason")"
+                            }
+                        }
+                    }
+                }
             }
         }
-        .onAppear {
-            if mockDataSender.shouldSimulate {
-                mockDataSender.startStreamingHeartRate()
-            } else {
-                mockDataSender.stopStreamingHeartRate()
-                requestAuthorization()
-            }
-        }
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) {
-            now in self.currentTime = now
-        }
-        .sheet(isPresented: $mockDataSender.showEventList) {
-            EventListView()
-                .environmentObject(mockDataSender)
-        }
-    }
     
-    private func requestAuthorization() {
-        healthKitManager.requestAuthorization { success, error in
-            if success {
-                startLiveUpdates()
-            } else if let error = error {
-                DispatchQueue.main.async {
-                    self.errorMessage = "Authorization failed: \(error.localizedDescription)"
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.errorMessage = "Authorization not granted."
+    private func requestAuthorizationAndStartWorkout() {
+            healthKitManager.requestAuthorization { success, error in
+                if success {
+                    startLiveUpdates()
+                    healthKitManager.startWorkoutSession()
+                    DispatchQueue.main.async {
+                        self.isWorkoutRunning = true
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.errorMessage = error?.localizedDescription ?? "Authorization not granted."
+                    }
                 }
             }
         }
-    }
     
     private func startLiveUpdates() {
-        healthKitManager.startLiveHeartRateUpdates { rate, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.errorMessage = "Failed to get live updates: \(error.localizedDescription)"
-                } else if let rate = rate {
-                    self.heartRate = rate
-                    self.lastUpdate = Date()
-                    self.mockDataSender.sendHeartRateData(heartRate: rate)
-                } else {
-                    self.errorMessage = "No heart rate data available."
+            healthKitManager.startLiveHeartRateUpdates { rate, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self.errorMessage = "Failed to get live updates: \(error.localizedDescription)"
+                    } else if let rate = rate {
+                        self.heartRate = rate
+                        self.lastUpdate = Date()
+                        self.mockDataSender.sendHeartRateData(heartRate: rate)
+                    } else {
+                        self.errorMessage = "No heart rate data available."
+                    }
                 }
             }
         }
-    }
 }

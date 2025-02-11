@@ -7,7 +7,7 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     @Published var currentHeartRate: Double?
     @Published var events: [Event] = []
     @Published var showEventList: Bool = false
-    @Published var shouldSimulate: Bool = true  // controls whether simulation is running
+    @Published var shouldSimulate: Bool = false  // controls whether simulation is running
     
     // Existing properties for simulation
     private var heartRateTimer: Timer?
@@ -146,43 +146,51 @@ class MockDataSender: NSObject, WCSessionDelegate, ObservableObject {
     
     func sendHeartRateData(heartRate: Double) {
         guard WCSession.default.isReachable else {
-            print("iPhone is not reachable")
+            print("📡 ❌ iPhone is not reachable. Cannot send heart rate data.")
             return
         }
-        
+
         let data: [String: Any] = [
             "HeartRate": heartRate,
             "Timestamp": Date().timeIntervalSince1970
         ]
-        
+
         WCSession.default.sendMessage(data, replyHandler: nil) { error in
-            print("Failed to send heart rate data: \(error.localizedDescription)")
+            print("📡 ❌ Failed to send heart rate data: \(error.localizedDescription)")
         }
-        print("Sent heart rate: \(heartRate) BPM")
+        print("📡 ✅ Sent heart rate: \(heartRate) BPM to iPhone")
     }
+
+
     
     // MARK: - WCSessionDelegate Methods
     
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
         DispatchQueue.main.async {
             if let mode = message["isMockMode"] as? Bool {
-                self.shouldSimulate = mode
-                if mode {
-                    self.startStreamingHeartRate()
-                    print("Switched to Mock Mode")
-                } else {
-                    self.stopStreamingHeartRate()
-                    print("Switched to Live Mode")
+                if mode != self.shouldSimulate {
+                    self.shouldSimulate = mode
+                    
+                    if mode {
+                        self.startStreamingHeartRate()
+                        print("🔄 Switched to Mock Mode")
+                    } else {
+                        self.stopStreamingHeartRate()
+                        self.currentHeartRate = nil
+                        print("✅ Switched to Live Mode")
+                    }
                 }
             }
+
             if let eventAction = message["Event"] as? String, eventAction == "EventHandled",
                let eventID = message["EventID"] as? String,
                let uuid = UUID(uuidString: eventID) {
                 self.events.removeAll { $0.id == uuid }
-                print("Event \(uuid) removed from watch")
+                print("🗑 Event \(uuid) removed from watch")
             }
         }
     }
+
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {

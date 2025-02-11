@@ -21,11 +21,18 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     }
 
     private func activateSession() {
-        guard WCSession.isSupported() else { return }
+        guard WCSession.isSupported() else {
+            print("❌ WCSession is NOT supported on this device")
+            return
+        }
+        
         let session = WCSession.default
         session.delegate = self
         session.activate()
+
+        print("📡 WCSession State: \(session.activationState.rawValue)") // Debug print session state
     }
+
 
     // MARK: - WCSessionDelegate Methods
 
@@ -38,41 +45,16 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        print("📲 🔍 Received message: \(message)") // Debug print to see all incoming messages
+
         DispatchQueue.main.async {
             if let heartRate = message["HeartRate"] as? Double {
                 self.latestHeartRate = heartRate
-                print("Received heart rate from Watch: \(heartRate) BPM")
-            }
-            
-            if let eventAction = message["Event"] as? String {
-                switch eventAction {
-                case "EventEnded":
-                    let isoFormatter = ISO8601DateFormatter()
-                    if let eventIDString = message["EventID"] as? String,
-                       let eventID = UUID(uuidString: eventIDString),
-                       let startTimeStr = message["StartTime"] as? String,
-                       let endTimeStr = message["EndTime"] as? String,
-                       let startTime = isoFormatter.date(from: startTimeStr),
-                       let endTime = isoFormatter.date(from: endTimeStr) {
-                        
-                        let newEvent = Event(id: eventID, startTime: startTime, endTime: endTime, isConfirmed: nil)
-                        if !self.events.contains(where: { $0.id == eventID }) {
-                            self.events.append(newEvent)
-                            print("New event received on iPhone: \(newEvent.id)")
-                        }
-                    }
-                case "EventHandled":
-                    if let eventIDString = message["EventID"] as? String,
-                       let uuid = UUID(uuidString: eventIDString) {
-                        self.events.removeAll { $0.id == uuid }
-                        print("Event \(uuid) removed from iPhone")
-                    }
-                default:
-                    break
-                }
+                print("📲 ✅ Received heart rate from Watch: \(heartRate) BPM")
             }
         }
     }
+
     
     func sendUserResponse(event: Event, isConfirmed: Bool) {
         guard WCSession.default.isReachable else {
