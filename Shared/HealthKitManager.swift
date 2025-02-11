@@ -85,25 +85,29 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate, HKLiveWorkoutBuilder
     // Called when new data is collected.
     // Inside the workout builder delegate method:
     func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf types: Set<HKSampleType>) {
-        // Loop over each sample type collected.
+        // Loop through each sample type that was updated.
         for sampleType in types {
-            // Check if the sample type is the heart rate type.
+            // Check if this sample type is the heart rate type.
             if let quantityType = sampleType as? HKQuantityType,
                quantityType == HKQuantityType.quantityType(forIdentifier: .heartRate) {
                 
-                // Try to get the statistics for heart rate.
+                // Retrieve the statistics for heart rate.
                 if let statistics = workoutBuilder.statistics(for: quantityType) {
-                    // Define the unit for heart rate: count per minute.
                     let heartRateUnit = HKUnit.count().unitDivided(by: HKUnit.minute())
-                    // Get the average heart rate from the statistics.
                     if let newHeartRate = statistics.averageQuantity()?.doubleValue(for: heartRateUnit) {
-                        // Call the update closure with the new heart rate.
+                        // Print and forward the value using the callback.
+                        print("Live heart rate updated: \(newHeartRate) BPM")
                         onHeartRateUpdate?(newHeartRate)
+                    } else {
+                        print("No average heart rate found in statistics.")
                     }
+                } else {
+                    print("No statistics available for heart rate.")
                 }
             }
         }
     }
+
 
 
     
