@@ -1,10 +1,3 @@
-//
-//  HRVCalculator.swift
-//  HRVConnectivityPrac
-//
-//  Created by Tyler Woody on 2/4/25.
-//
-
 import Foundation
 import Combine
 
