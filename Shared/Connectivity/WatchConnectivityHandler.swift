@@ -30,9 +30,9 @@ class WatchConnectivityHandler: NSObject, WCSessionDelegate, ObservableObject {
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
-            print("WatchConnectivityHandler activation error: \(error.localizedDescription)")
+            print("WCSession activation error: \(error.localizedDescription)")
         } else {
-            print("WatchConnectivityHandler activated with state: \(activationState.rawValue)")
+            print("WCSession activated with state: \(activationState.rawValue)")
         }
     }
     

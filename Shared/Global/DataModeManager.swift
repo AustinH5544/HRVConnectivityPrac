@@ -11,7 +11,7 @@ import Combine
 class DataModeManager: ObservableObject {
     static let shared = DataModeManager()
     
-    @Published var isMockMode: Bool = true {
+    @Published var isMockMode: Bool = false {
         didSet {
             print("Data mode changed to: \(isMockMode ? "Mock" : "Live")")
             // Optionally, send out the mode change to the paired device.

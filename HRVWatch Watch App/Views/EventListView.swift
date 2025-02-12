@@ -7,33 +7,18 @@ struct EventListView: View {
         NavigationView {
             List {
                 ForEach(mockHeartRateGenerator.events) { event in
-                    VStack(alignment: .leading) {
-                        Text("Event ID: \(event.id.uuidString.prefix(8))")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        Text("Start: \(event.startTime.formatted())")
-                            .font(.subheadline)
-                        Text("End: \(event.endTime.formatted())")
-                            .font(.subheadline)
-                        HStack {
-                            Button("Confirm") {
-                                mockHeartRateGenerator.handleUserResponse(event: event, isConfirmed: true)
-                            }
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                            
-                            Button("Dismiss") {
-                                mockHeartRateGenerator.handleUserResponse(event: event, isConfirmed: false)
-                            }
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                    NavigationLink(destination: EventDetailView(event: event)) {
+                        VStack(alignment: .leading) {
+                            Text("Event ID: \(event.id.uuidString.prefix(8))")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            Text("Start: \(event.startTime.formatted())")
+                                .font(.subheadline)
+                            Text("End: \(event.endTime.formatted())")
+                                .font(.subheadline)
                         }
+                        .padding()
                     }
-                    .padding()
                 }
             }
             .navigationTitle("Active Events")
