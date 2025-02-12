@@ -36,18 +36,6 @@ class WatchConnectivityHandler: NSObject, WCSessionDelegate, ObservableObject {
         }
     }
     
-    // Only implement these methods on iOS since they’re unavailable on watchOS.
-    #if !os(watchOS)
-    func sessionDidBecomeInactive(_ session: WCSession) {
-        print("WCSession did become inactive.")
-    }
-    
-    func sessionDidDeactivate(_ session: WCSession) {
-        print("WCSession did deactivate. Reactivating session.")
-        WCSession.default.activate()
-    }
-    #endif
-    
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         DispatchQueue.main.async {
             // Handle a mode change message:
