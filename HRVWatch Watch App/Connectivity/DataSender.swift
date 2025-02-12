@@ -53,18 +53,6 @@ class DataSender: ObservableObject {
         print("Sent event: \(event.id)")
     }
     
-    func sendModeChange(isMockMode: Bool) {
-        guard session.isReachable else {
-            print("iPhone is not reachable for mode change")
-            return
-        }
-        let data: [String: Any] = ["isMockMode": isMockMode]
-        session.sendMessage(data, replyHandler: nil) { error in
-            print("Failed to send mode change: \(error.localizedDescription)")
-        }
-        print("Sent mode change: \(isMockMode ? "Mock" : "Live")")
-    }
-    
     func sendUserResponse(event: Event, isConfirmed: Bool) {
         guard session.isReachable else {
             print("iPhone is not reachable")

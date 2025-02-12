@@ -76,6 +76,7 @@ struct ContentView: View {
             } else {
                 MockHeartRateGenerator.shared.stopStreamingHeartRate()
                 LiveHeartRateManager.shared.startLiveUpdates()
+                self.isWorkoutRunning = true
             }
         }
     }
