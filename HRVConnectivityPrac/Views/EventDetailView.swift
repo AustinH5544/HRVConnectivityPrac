@@ -8,39 +8,38 @@
 import SwiftUI
 
 struct EventDetailView: View {
-    let event: Event
+    var event: Event
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 12) {
             Text("Event Details")
                 .font(.headline)
             Text("ID: \(event.id.uuidString)")
                 .font(.caption)
-                .foregroundColor(.gray)
             Text("Start: \(event.startTime.formatted())")
             Text("End: \(event.endTime.formatted())")
             
-            HStack(spacing: 20) {
+            HStack {
                 Button("Confirm") {
-                    PhoneConnectivityManager.shared.sendUserResponse(event: event, isConfirmed: true)
+                    // You can notify the shared event detector if needed:
+                    DataSender.shared.sendUserResponse(event: event, isConfirmed: true)
+                    EventDetectionManager.shared.handleEventHandled(eventID: event.id)
                 }
                 .padding()
                 .background(Color.green)
                 .foregroundColor(.white)
-                .cornerRadius(10)
-
+                .cornerRadius(8)
+                
                 Button("Dismiss") {
-                    PhoneConnectivityManager.shared.sendUserResponse(event: event, isConfirmed: false)
+                    DataSender.shared.sendUserResponse(event: event, isConfirmed: false)
+                    EventDetectionManager.shared.handleEventHandled(eventID: event.id)
                 }
                 .padding()
                 .background(Color.red)
                 .foregroundColor(.white)
-                .cornerRadius(10)
+                .cornerRadius(8)
             }
-            
-            Spacer()
         }
         .padding()
-        .navigationBarTitle("Event", displayMode: .inline)
     }
 }

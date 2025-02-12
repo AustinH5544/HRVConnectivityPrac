@@ -20,6 +20,7 @@ class LiveHeartRateManager: NSObject, ObservableObject {
     #endif
     
     @Published var latestHeartRate: Double?
+    let hrvCalculator = HRVCalculator()
     
     /// Starts live heart rate updates using an anchored object query.
     func startLiveUpdates() {
@@ -92,10 +93,14 @@ class LiveHeartRateManager: NSObject, ObservableObject {
             print("❤️ Live Heart Rate: \(Int(heartRate)) BPM")
             DispatchQueue.main.async {
                 self.latestHeartRate = heartRate
+                self.hrvCalculator.addBeat(heartRate: heartRate, at: Date())
+                // Evaluate HRV using the shared event detection manager:
+                EventDetectionManager.shared.evaluateHRV(using: self.hrvCalculator)
                 DataSender.shared.sendHeartRateData(heartRate: heartRate)
             }
         }
     }
+
     
     // MARK: - Workout Session (for watchOS)
     #if os(watchOS)

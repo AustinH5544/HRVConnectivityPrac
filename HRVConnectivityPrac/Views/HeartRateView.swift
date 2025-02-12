@@ -42,7 +42,7 @@ struct ContentView: View {
                         .padding()
                 } else {
                     NavigationLink(
-                        destination: EventListView(connectivityManager: connectivityManager)
+                        destination: EventListView()
                     ) {
                         Text("View Active Events (\(connectivityManager.events.count))")
                             .font(.subheadline)

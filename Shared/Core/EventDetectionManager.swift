@@ -17,9 +17,9 @@ class EventDetectionManager: ObservableObject {
     // The RMSSD threshold to trigger events.
     let rmssdThreshold: Double = 30.0
     
-    /// Call this function with your HRVCalculator to evaluate whether an event should start or end.
-    func evaluateHRV(_ hrvCalculator: HRVCalculator) {
-        if let currentRMSSD = hrvCalculator.rmssd {
+    /// Evaluate HRV values and start or end an event accordingly.
+    func evaluateHRV(using calculator: HRVCalculator) {
+        if let currentRMSSD = calculator.rmssd {
             if currentRMSSD < rmssdThreshold, activeEvent == nil {
                 startEvent()
             } else if currentRMSSD >= rmssdThreshold, let event = activeEvent {
@@ -32,7 +32,7 @@ class EventDetectionManager: ObservableObject {
         let newEvent = Event(id: UUID(), startTime: Date(), endTime: Date(), isConfirmed: nil)
         activeEvent = newEvent
         print("New event started: \(newEvent.id)")
-        // Optionally, you could also send an "event started" message here.
+        // Optionally, send an event-start message.
     }
     
     private func endEvent(event: Event) {
@@ -42,7 +42,6 @@ class EventDetectionManager: ObservableObject {
         events.append(endedEvent)
         activeEvent = nil
         print("Event ended: \(endedEvent.id)")
-        // Notify via DataSender that an event ended.
         DataSender.shared.sendEventEndData(event: endedEvent)
     }
     

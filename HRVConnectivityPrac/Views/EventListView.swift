@@ -8,26 +8,27 @@
 import SwiftUI
 
 struct EventListView: View {
-    @ObservedObject var connectivityManager: PhoneConnectivityManager
+    @ObservedObject var eventDetector = EventDetectionManager.shared
 
     var body: some View {
-        List {
-            ForEach(connectivityManager.events) { event in
-                NavigationLink(destination: EventDetailView(event: event)) {
-                    VStack(alignment: .leading) {
-                        Text("Event ID: \(event.id.uuidString.prefix(8))")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        Text("Start: \(event.startTime.formatted())")
-                            .font(.subheadline)
-                        Text("End: \(event.endTime.formatted())")
-                            .font(.subheadline)
+        NavigationView {
+            List {
+                ForEach(eventDetector.events) { event in
+                    NavigationLink(destination: EventDetailView(event: event)) {
+                        VStack(alignment: .leading) {
+                            Text("Event ID: \(event.id.uuidString.prefix(8))")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            Text("Start: \(event.startTime.formatted())")
+                                .font(.subheadline)
+                            Text("End: \(event.endTime.formatted())")
+                                .font(.subheadline)
+                        }
+                        .padding()
                     }
-                    .padding(.vertical, 4)
                 }
             }
+            .navigationTitle("Active Events")
         }
-        .listStyle(PlainListStyle())
-        .navigationTitle("Active Events")
     }
 }
