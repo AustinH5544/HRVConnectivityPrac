@@ -2,7 +2,13 @@ import SwiftUI
 
 @main
 struct HRVWatch_Watch_AppApp: App {
-    @StateObject private var mockDataSender = MockDataSender.shared
+    // Instantiate the connectivity handler on launch
+    init() {
+        _ = WatchConnectivityHandler.shared
+    }
+    
+    @StateObject private var mockHeartRateGenerator = MockHeartRateGenerator.shared
+    @StateObject private var dataModeManager = DataModeManager.shared
     
     // Global default: change this to false for live mode.
     private let useMockData: Bool = false
@@ -10,13 +16,8 @@ struct HRVWatch_Watch_AppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(mockDataSender)
-                .onAppear {
-                    mockDataSender.shouldSimulate = useMockData
-                    if !useMockData {
-                        mockDataSender.stopStreamingHeartRate()
-                    }
-                }
+                .environmentObject(mockHeartRateGenerator)
+                .environmentObject(dataModeManager)
         }
     }
 }
