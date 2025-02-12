@@ -76,6 +76,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Managers/DataSender.swift,
+				Managers/MockHeartRateGenerator.swift,
+				Managers/WatchConnectivityHandler.swift,
 			);
 			target = 874173892D51677300131B18 /* HRVConnectivityPrac */;
 		};
@@ -85,8 +87,14 @@
 				Core/EventDetectionManager.swift,
 				Core/HeartRateProvider.swift,
 				Core/HRVCalculator.swift,
-				Global/DataModeManager.swift,
 				Models/Event.swift,
+			);
+			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
+		};
+		8773AE1E2D5C3479000C200F /* Exceptions for "HRVConnectivityPrac" folder in "HRVWatch Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Managers/PhoneConnectivityManager.swift,
 			);
 			target = 874173BC2D516B4400131B18 /* HRVWatch Watch App */;
 		};
@@ -95,6 +103,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8741738C2D51677300131B18 /* HRVConnectivityPrac */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8773AE1E2D5C3479000C200F /* Exceptions for "HRVConnectivityPrac" folder in "HRVWatch Watch App" target */,
+			);
 			path = HRVConnectivityPrac;
 			sourceTree = "<group>";
 		};

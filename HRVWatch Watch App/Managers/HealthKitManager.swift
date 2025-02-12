@@ -1,6 +1,6 @@
 import HealthKit
 
-class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
+public class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
     let healthStore = HKHealthStore()
     private var workoutSession: HKWorkoutSession?
     private var workoutDataSource: HKLiveWorkoutDataSource?
@@ -68,7 +68,7 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
     }
 
     // MARK: - Workout Session Delegate Methods
-    func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
+    public func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
         switch toState {
         case .running:
             print("🏃‍♂️ Workout session is now running.")
@@ -80,7 +80,7 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
         }
     }
 
-    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
+    public func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         print("❌ Workout session error: \(error.localizedDescription)")
     }
 
@@ -127,3 +127,4 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
     }
 
 }
+

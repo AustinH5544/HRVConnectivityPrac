@@ -1,20 +1,11 @@
 import WatchConnectivity
-import SwiftUI
+import Foundation
 
 class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     static let shared = PhoneConnectivityManager()
 
+    @Published var latestHeartRate: Double?
     @Published var events: [Event] = []
-    @Published var latestHeartRate: Double? = nil
-    @Published var isPromptVisible: Bool = false {
-        didSet {
-            print("isPromptVisible updated: \(isPromptVisible)")
-        }
-    }
-    @Published var eventStartTime: Date? = nil
-    @Published var eventEndTime: Date? = nil
-    @Published var eventMessage: String? = nil
-    @Published var hrvCalculator = HRVCalculator()
 
     private override init() {
         super.init()
@@ -26,79 +17,42 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
             print("❌ WCSession is NOT supported on this device")
             return
         }
-        
+
         let session = WCSession.default
         session.delegate = self
         session.activate()
-
-        print("📡 WCSession State: \(session.activationState.rawValue)") // Debug print session state
+        print("📡 iPhone WCSession Activated")
     }
 
-
-    // MARK: - WCSessionDelegate Methods
-
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        if let error = error {
-            print("iPhone WCSession activation error: \(error.localizedDescription)")
-        } else {
-            print("iPhone WCSession activated with state: \(activationState.rawValue)")
-        }
-    }
-
+    // MARK: - Receiving Data from Watch
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        print("📲 🔍 Received message: \(message)") // Debug print to see all incoming messages
-
         DispatchQueue.main.async {
+            print("📲 Received message from Watch: \(message)")
+
             if let heartRate = message["HeartRate"] as? Double {
                 self.latestHeartRate = heartRate
-                self.hrvCalculator.addBeat(heartRate: heartRate, at: Date())
-                print("📲 ✅ Received heart rate from Watch: \(heartRate) BPM")
+                print("❤️ Updated heart rate: \(heartRate) BPM")
             }
         }
     }
 
-    
-    func sendUserResponse(event: Event, isConfirmed: Bool) {
-        guard WCSession.default.isReachable else {
-            print("Watch is not reachable")
-            return
-        }
-
-        let response: [String: Any] = [
-            "Event": "EventHandled",
-            "EventID": event.id.uuidString,
-            "IsConfirmed": isConfirmed
-        ]
-
-        WCSession.default.sendMessage(response, replyHandler: nil) { error in
-            print("Failed to send user response to watch: \(error.localizedDescription)")
-        }
-
-        DispatchQueue.main.async {
-            self.events.removeAll { $0.id == event.id }
-            print("Event \(event.id) \(isConfirmed ? "confirmed" : "dismissed") and removed.")
+    // MARK: - WCSession Lifecycle
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if let error = error {
+            print("❌ iPhone WCSession activation error: \(error.localizedDescription)")
+        } else {
+            print("📡 iPhone WCSession Activated Successfully")
         }
     }
     
+    #if os(iOS)
     func sessionDidBecomeInactive(_ session: WCSession) {
-        print("WCSession became inactive")
+        // Handle session becoming inactive if needed
     }
 
     func sessionDidDeactivate(_ session: WCSession) {
-        print("WCSession deactivated")
-        WCSession.default.activate()
+        // Reactivate session if necessary
+        session.activate()
     }
-    
-    func sendModeChange(isMockMode: Bool) {
-        guard WCSession.default.isReachable else {
-            print("Watch is not reachable")
-            return
-        }
-        
-        let modeMessage: [String: Any] = ["isMockMode": isMockMode]
-        WCSession.default.sendMessage(modeMessage, replyHandler: nil) { error in
-            print("Failed to send mode change: \(error.localizedDescription)")
-        }
-        print("Sent mode change: \(isMockMode ? "Mock" : "Live")")
-    }
+    #endif
 }
