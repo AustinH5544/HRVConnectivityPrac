@@ -57,6 +57,10 @@ struct ContentView: View {
                     .background(Color.blue)
                     .cornerRadius(8)
             }
+            .sheet(isPresented: $mockHeartRateGenerator.showEventList) {
+                EventListView()
+                    .environmentObject(EventDetectionManager.shared)
+            }
             
             if let error = errorMessage {
                 Text(error)

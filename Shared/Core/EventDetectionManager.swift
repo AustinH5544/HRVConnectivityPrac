@@ -18,15 +18,21 @@ class EventDetectionManager: ObservableObject {
     let rmssdThreshold: Double = 30.0
     
     /// Evaluate HRV values and start or end an event accordingly.
-    func evaluateHRV(using calculator: HRVCalculator) {
-        if let currentRMSSD = calculator.rmssd {
-            if currentRMSSD < rmssdThreshold, activeEvent == nil {
-                startEvent()
-            } else if currentRMSSD >= rmssdThreshold, let event = activeEvent {
-                endEvent(event: event)
-            }
+    func evaluateHRV(using hrvCalculator: HRVCalculator) {
+        // Only evaluate if there are at least 5 beats and RMSSD is non-zero.
+        guard hrvCalculator.beats.count >= 5,
+              let currentRMSSD = hrvCalculator.rmssd,
+              currentRMSSD > 0 else {
+            return
+        }
+        
+        if currentRMSSD < rmssdThreshold, activeEvent == nil {
+            startEvent()
+        } else if currentRMSSD >= rmssdThreshold, let event = activeEvent {
+            endEvent(event: event)
         }
     }
+
     
     private func startEvent() {
         let newEvent = Event(id: UUID(), startTime: Date(), endTime: Date(), isConfirmed: nil)

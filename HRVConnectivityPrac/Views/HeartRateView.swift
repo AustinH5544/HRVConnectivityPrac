@@ -35,7 +35,7 @@ struct ContentView: View {
                         .font(.headline)
                 }
 
-                if connectivityManager.events.isEmpty {
+                if EventDetectionManager.shared.events.isEmpty {
                     Text("No active events")
                         .font(.title3)
                         .foregroundColor(.gray)
@@ -44,7 +44,7 @@ struct ContentView: View {
                     NavigationLink(
                         destination: EventListView()
                     ) {
-                        Text("View Active Events (\(connectivityManager.events.count))")
+                        Text("View Active Events (\(EventDetectionManager.shared.events.count))")
                             .font(.subheadline)
                             .foregroundColor(.white)
                             .padding(8)

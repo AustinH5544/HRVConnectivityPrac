@@ -46,16 +46,30 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        print("📲 🔍 Received message: \(message)") // Debug print to see all incoming messages
-
         DispatchQueue.main.async {
             if let heartRate = message["HeartRate"] as? Double {
                 self.latestHeartRate = heartRate
                 self.hrvCalculator.addBeat(heartRate: heartRate, at: Date())
-                print("📲 ✅ Received heart rate from Watch: \(heartRate) BPM")
+                print("Received heart rate from Watch: \(heartRate) BPM")
+            }
+            if let eventAction = message["Event"] as? String {
+                if eventAction == "EventEnded" {
+                    let isoFormatter = ISO8601DateFormatter()
+                    if let eventIDString = message["EventID"] as? String,
+                       let startTimeString = message["StartTime"] as? String,
+                       let endTimeString = message["EndTime"] as? String,
+                       let eventID = UUID(uuidString: eventIDString),
+                       let startTime = isoFormatter.date(from: startTimeString),
+                       let endTime = isoFormatter.date(from: endTimeString) {
+                        let event = Event(id: eventID, startTime: startTime, endTime: endTime, isConfirmed: nil)
+                        self.events.append(event)
+                        print("Received event from Watch: \(eventID)")
+                    }
+                }
             }
         }
     }
+
 
     
     func sendUserResponse(event: Event, isConfirmed: Bool) {
