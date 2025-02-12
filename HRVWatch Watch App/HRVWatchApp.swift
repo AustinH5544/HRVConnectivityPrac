@@ -2,19 +2,22 @@ import SwiftUI
 
 @main
 struct HRVWatch_Watch_AppApp: App {
-    @StateObject private var mockDataSender = MockDataSender.shared
+    @StateObject private var mockHeartRateGenerator = MockHeartRateGenerator.shared
     
     // Global default: change this to false for live mode.
-    private let useMockData: Bool = false
+    private let useMockData: Bool = true
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(mockDataSender)
+                .environmentObject(mockHeartRateGenerator)
                 .onAppear {
-                    mockDataSender.shouldSimulate = useMockData
+                    // Set the global mode
+                    DataModeManager.shared.isMockMode = useMockData
+                    
+                    // Optionally, ensure simulation is stopped in live mode.
                     if !useMockData {
-                        mockDataSender.stopStreamingHeartRate()
+                        mockHeartRateGenerator.stopStreamingHeartRate()
                     }
                 }
         }

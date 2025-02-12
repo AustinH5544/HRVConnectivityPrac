@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct EventListView: View {
-    @EnvironmentObject var mockDataSender: MockDataSender
+    @EnvironmentObject var mockHeartRateGenerator: MockHeartRateGenerator
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(mockDataSender.events) { event in
+                ForEach(mockHeartRateGenerator.events) { event in
                     VStack(alignment: .leading) {
                         Text("Event ID: \(event.id.uuidString.prefix(8))")
                             .font(.caption)
@@ -17,7 +17,7 @@ struct EventListView: View {
                             .font(.subheadline)
                         HStack {
                             Button("Confirm") {
-                                mockDataSender.handleUserResponse(event: event, isConfirmed: true)
+                                mockHeartRateGenerator.handleUserResponse(event: event, isConfirmed: true)
                             }
                             .padding()
                             .background(Color.green)
@@ -25,7 +25,7 @@ struct EventListView: View {
                             .cornerRadius(10)
                             
                             Button("Dismiss") {
-                                mockDataSender.handleUserResponse(event: event, isConfirmed: false)
+                                mockHeartRateGenerator.handleUserResponse(event: event, isConfirmed: false)
                             }
                             .padding()
                             .background(Color.red)
