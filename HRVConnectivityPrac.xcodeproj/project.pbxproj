@@ -75,7 +75,7 @@
 		870FA8BC2D5D4EC1009E4939 /* Exceptions for "HRVWatch Watch App" folder in "HRVConnectivityPrac" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Managers/DataSender.swift,
+				Connectivity/DataSender.swift,
 			);
 			target = 874173892D51677300131B18 /* HRVConnectivityPrac */;
 		};
