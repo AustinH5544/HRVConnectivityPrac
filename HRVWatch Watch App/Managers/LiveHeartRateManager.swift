@@ -66,9 +66,10 @@ class LiveHeartRateManager: NSObject, ObservableObject {
         for sample in samples {
             let heartRate = sample.quantity.doubleValue(for: HKUnit(from: "count/min"))
             print("❤️ Live Heart Rate: \(Int(heartRate)) BPM")
-            self.latestHeartRate = heartRate
-            DataSender.shared.sendHeartRateData(heartRate: heartRate)
+            DispatchQueue.main.async {
+                self.latestHeartRate = heartRate
+                DataSender.shared.sendHeartRateData(heartRate: heartRate)
+            }
         }
     }
-
 }

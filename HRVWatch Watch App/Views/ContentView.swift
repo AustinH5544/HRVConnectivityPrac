@@ -65,11 +65,13 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            if dataModeManager.isMockMode {
-                mockHeartRateGenerator.startStreamingHeartRate()
+            print("DataModeManager.isMockMode:", DataModeManager.shared.isMockMode)
+            if DataModeManager.shared.isMockMode {
+                MockHeartRateGenerator.shared.startStreamingHeartRate()
+                LiveHeartRateManager.shared.stopLiveUpdates()
             } else {
-                mockHeartRateGenerator.stopStreamingHeartRate()
-                // Request HealthKit authorization and start live updates...
+                MockHeartRateGenerator.shared.stopStreamingHeartRate()
+                LiveHeartRateManager.shared.startLiveUpdates()
             }
         }
     }

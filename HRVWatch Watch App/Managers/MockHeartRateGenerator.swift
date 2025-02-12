@@ -25,12 +25,16 @@ class MockHeartRateGenerator: ObservableObject {
     private var activeEvent: Event?
     
     func startStreamingHeartRate() {
+        // Only start streaming if we're in mock mode.
+        guard DataModeManager.shared.isMockMode else {
+            print("Not in mock mode – not starting the mock generator.")
+            return
+        }
         guard heartRateTimer == nil else { return }
         heartRateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.generateAndSendHeartRate()
         }
     }
-
     
     func stopStreamingHeartRate() {
         heartRateTimer?.invalidate()
@@ -38,6 +42,9 @@ class MockHeartRateGenerator: ObservableObject {
     }
     
     private func generateAndSendHeartRate() {
+        // Double-check we're in mock mode.
+        guard DataModeManager.shared.isMockMode else { return }
+        
         let variability = Double.random(in: -5...5)
         if isIncreasing {
             baseHeartRate += 1.0 + variability
@@ -85,12 +92,10 @@ class MockHeartRateGenerator: ObservableObject {
 
 extension MockHeartRateGenerator {
     func handleUserResponse(event: Event, isConfirmed: Bool) {
-        // Update the event in the local events array.
         if let index = events.firstIndex(where: { $0.id == event.id }) {
             events[index].isConfirmed = isConfirmed
             events.remove(at: index)
         }
-        // Optionally, notify the paired device.
         DataSender.shared.sendUserResponse(event: event, isConfirmed: isConfirmed)
     }
 }
