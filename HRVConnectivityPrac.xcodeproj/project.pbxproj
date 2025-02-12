@@ -82,6 +82,7 @@
 		874174182D516C7D00131B18 /* Exceptions for "Shared" folder in "HRVWatch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Connectivity/WatchConnectivityHandler.swift,
 				Core/EventDetectionManager.swift,
 				Core/HRVCalculator.swift,
 				Global/DataModeManager.swift,
