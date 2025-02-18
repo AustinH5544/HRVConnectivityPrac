@@ -4,7 +4,6 @@ import SwiftUI
 class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     static let shared = PhoneConnectivityManager()
 
-    @Published var events: [Event] = []
     @Published var latestHeartRate: Double? = nil
     @Published var isPromptVisible: Bool = false {
         didSet {
@@ -31,9 +30,8 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
         session.delegate = self
         session.activate()
 
-        print("📡 WCSession State: \(session.activationState.rawValue)") // Debug print session state
+        print("📡 WCSession State: \(session.activationState.rawValue)")
     }
-
 
     // MARK: - WCSessionDelegate Methods
 
@@ -52,26 +50,26 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
                 self.hrvCalculator.addBeat(heartRate: heartRate, at: Date())
                 print("Received heart rate from Watch: \(heartRate) BPM")
             }
-            if let eventAction = message["Event"] as? String {
-                if eventAction == "EventEnded" {
-                    let isoFormatter = ISO8601DateFormatter()
-                    if let eventIDString = message["EventID"] as? String,
-                       let startTimeString = message["StartTime"] as? String,
-                       let endTimeString = message["EndTime"] as? String,
-                       let eventID = UUID(uuidString: eventIDString),
-                       let startTime = isoFormatter.date(from: startTimeString),
-                       let endTime = isoFormatter.date(from: endTimeString) {
-                        let event = Event(id: eventID, startTime: startTime, endTime: endTime, isConfirmed: nil)
-                        self.events.append(event)
-                        print("Received event from Watch: \(eventID)")
-                    }
+            if let eventAction = message["Event"] as? String, eventAction == "EventEnded" {
+                let isoFormatter = ISO8601DateFormatter()
+                isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                if let eventIDString = message["EventID"] as? String,
+                   let startTimeString = message["StartTime"] as? String,
+                   let endTimeString = message["EndTime"] as? String,
+                   let eventID = UUID(uuidString: eventIDString),
+                   let startTime = isoFormatter.date(from: startTimeString),
+                   let endTime = isoFormatter.date(from: endTimeString) {
+                    let event = Event(id: eventID, startTime: startTime, endTime: endTime, isConfirmed: nil)
+                    // Update the shared event manager:
+                    EventDetectionManager.shared.events.append(event)
+                    print("Received event from Watch: \(eventID)")
+                } else {
+                    print("Failed to parse event data from message: \(message)")
                 }
             }
         }
     }
 
-
-    
     func sendUserResponse(event: Event, isConfirmed: Bool) {
         guard WCSession.default.isReachable else {
             print("Watch is not reachable")
@@ -89,7 +87,8 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
         }
 
         DispatchQueue.main.async {
-            self.events.removeAll { $0.id == event.id }
+            // Remove event from the shared event manager.
+            EventDetectionManager.shared.events.removeAll { $0.id == event.id }
             print("Event \(event.id) \(isConfirmed ? "confirmed" : "dismissed") and removed.")
         }
     }

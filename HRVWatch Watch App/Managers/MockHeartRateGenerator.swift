@@ -12,7 +12,7 @@ class MockHeartRateGenerator: ObservableObject {
     static let shared = MockHeartRateGenerator()
     
     @Published var currentHeartRate: Double?
-    @Published var events: [Event] = []
+    // Removed local events storage
     @Published var showEventList: Bool = false
     
     private var heartRateTimer: Timer?
@@ -22,7 +22,7 @@ class MockHeartRateGenerator: ObservableObject {
     private let hrvCalculator = HRVCalculator()
     private let rmssdThreshold: Double = 30.0 // Adjust threshold as needed
     
-    private var activeEvent: Event?
+    // No local activeEvent
     
     func startStreamingHeartRate() {
         // Only start streaming if we're in mock mode.
@@ -61,40 +61,19 @@ class MockHeartRateGenerator: ObservableObject {
         
         print("Current RMSSD: \(hrvCalculator.rmssd ?? 0)")
         
-        if let currentRMSSD = hrvCalculator.rmssd {
-            if currentRMSSD < rmssdThreshold, activeEvent == nil {
-                startEvent()
-            } else if currentRMSSD >= rmssdThreshold, activeEvent != nil {
-                endEventIfNeeded()
-            }
-        }
+        // Call the centralized event detection.
+        EventDetectionManager.shared.evaluateHRV(using: hrvCalculator)
         
         DataSender.shared.sendHeartRateData(heartRate: realisticHeartRate)
-    }
-    
-    private func startEvent() {
-        guard activeEvent == nil else { return }
-        let newEvent = Event(id: UUID(), startTime: Date(), endTime: Date(), isConfirmed: nil)
-        activeEvent = newEvent
-        print("New event started: \(newEvent.id)")
-        // Optionally: send event start data if needed
-    }
-    
-    private func endEventIfNeeded() {
-        guard let event = activeEvent else { return }
-        activeEvent = nil
-        let endedEvent = Event(id: event.id, startTime: event.startTime, endTime: Date(), isConfirmed: nil)
-        events.append(endedEvent)
-        DataSender.shared.sendEventEndData(event: endedEvent)
-        print("Event ended: \(endedEvent.id)")
     }
 }
 
 extension MockHeartRateGenerator {
     func handleUserResponse(event: Event, isConfirmed: Bool) {
-        if let index = events.firstIndex(where: { $0.id == event.id }) {
-            events[index].isConfirmed = isConfirmed
-            events.remove(at: index)
+        // Update the shared event manager.
+        if let index = EventDetectionManager.shared.events.firstIndex(where: { $0.id == event.id }) {
+            EventDetectionManager.shared.events[index].isConfirmed = isConfirmed
+            EventDetectionManager.shared.events.remove(at: index)
         }
         DataSender.shared.sendUserResponse(event: event, isConfirmed: isConfirmed)
     }

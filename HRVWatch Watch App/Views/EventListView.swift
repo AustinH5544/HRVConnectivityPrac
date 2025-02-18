@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct EventListView: View {
-    @EnvironmentObject var mockHeartRateGenerator: MockHeartRateGenerator
+    // Use the shared event detection manager for events.
+    @EnvironmentObject var eventDetector: EventDetectionManager
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(mockHeartRateGenerator.events) { event in
+                ForEach(eventDetector.events) { event in
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Event ID: \(event.id.uuidString.prefix(8))")
                             .font(.caption)
@@ -18,7 +19,9 @@ struct EventListView: View {
                         
                         HStack(spacing: 12) {
                             Button(action: {
-                                MockHeartRateGenerator.shared.handleUserResponse(event: event, isConfirmed: true)
+                                // Send the user response and update the shared event manager.
+                                DataSender.shared.sendUserResponse(event: event, isConfirmed: true)
+                                eventDetector.handleEventHandled(eventID: event.id)
                             }) {
                                 Text("Confirm")
                                     .font(.caption)
@@ -29,7 +32,8 @@ struct EventListView: View {
                             }
                             
                             Button(action: {
-                                MockHeartRateGenerator.shared.handleUserResponse(event: event, isConfirmed: false)
+                                DataSender.shared.sendUserResponse(event: event, isConfirmed: false)
+                                eventDetector.handleEventHandled(eventID: event.id)
                             }) {
                                 Text("Dismiss")
                                     .font(.caption)

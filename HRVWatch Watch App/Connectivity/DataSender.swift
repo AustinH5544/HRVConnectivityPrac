@@ -11,7 +11,7 @@ import SwiftUI
 class DataSender: ObservableObject {
     static let shared = DataSender()
     
-    // Create a computed property to log and return the default session.
+    // Computed property to get the default session.
     private var session: WCSession {
         let session = WCSession.default
         print("WCSession activation state: \(session.activationState.rawValue)")
@@ -41,6 +41,7 @@ class DataSender: ObservableObject {
             return
         }
         let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let eventData: [String: Any] = [
             "Event": "EventEnded",
             "EventID": event.id.uuidString,
@@ -69,5 +70,3 @@ class DataSender: ObservableObject {
         print("Sent event confirmation for \(event.id)")
     }
 }
-
-

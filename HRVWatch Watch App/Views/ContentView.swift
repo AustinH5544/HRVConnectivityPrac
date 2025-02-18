@@ -5,10 +5,10 @@ struct ContentView: View {
     // HealthKitManager handles authorization and workout session.
     private let healthKitManager = HealthKitManager()
     
-    // Use the new LiveHeartRateManager to receive live heart rate data.
+    // Live heart rate data.
     @ObservedObject var liveHeartRateManager = LiveHeartRateManager.shared
     
-    // Use the mock generator when in mock mode.
+    // The mock generator is used in mock mode.
     @EnvironmentObject var mockHeartRateGenerator: MockHeartRateGenerator
     
     // DataModeManager (a shared singleton) controls the mode.
@@ -45,12 +45,12 @@ struct ContentView: View {
                 .font(.subheadline)
                 .foregroundColor(isWorkoutRunning ? .green : .gray)
             
-            // Show events button.
+            // Show events button using the shared EventDetectionManager.
             Button(action: {
-                // Toggle display of events; you might present a sheet here.
+                // Toggle display of events.
                 mockHeartRateGenerator.showEventList.toggle()
             }) {
-                Text("Events (\(mockHeartRateGenerator.events.count))")
+                Text("Events (\(EventDetectionManager.shared.events.count))")
                     .font(.subheadline)
                     .foregroundColor(.white)
                     .padding(8)
@@ -67,12 +67,15 @@ struct ContentView: View {
                     .foregroundColor(.red)
                     .padding()
             }
+            
+            Spacer()
         }
         .onAppear {
             print("DataModeManager.isMockMode:", DataModeManager.shared.isMockMode)
             if DataModeManager.shared.isMockMode {
                 MockHeartRateGenerator.shared.startStreamingHeartRate()
                 LiveHeartRateManager.shared.stopLiveUpdates()
+                self.isWorkoutRunning = false
             } else {
                 MockHeartRateGenerator.shared.stopStreamingHeartRate()
                 LiveHeartRateManager.shared.startLiveUpdates()
