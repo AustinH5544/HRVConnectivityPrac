@@ -7,16 +7,22 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
     
     // MARK: - Request Authorization
     func requestAuthorization(completion: @escaping (Bool, Error?) -> Void) {
+        // Seeing if healthkit is available on this device.
         guard HKHealthStore.isHealthDataAvailable() else {
             completion(false, NSError(domain: "HealthKitManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Health data not available"]))
             return
         }
         
+        // HKObjectType.quantityType are the different kinds od data you can pull from
+        // healthkit. We are using heart rate, but others would include step count
+        // body mass, blood pressure, etc.
         guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else {
             completion(false, NSError(domain: "HealthKitManager", code: 2, userInfo: [NSLocalizedDescriptionKey: "Heart rate type not available"]))
             return
         }
         
+        // Asking for permission to read heart rate. If successful, enable
+        // background delivery and start a workout session.
         healthStore.requestAuthorization(toShare: nil, read: [heartRateType]) { success, error in
             if success {
                 self.enableBackgroundDelivery()
@@ -28,6 +34,7 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
     
     // MARK: - Enable Background Delivery
     private func enableBackgroundDelivery() {
+        // Enabling heart rate to be pushed to app even when app is not in foreground.
         guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else { return }
         healthStore.enableBackgroundDelivery(for: heartRateType, frequency: .immediate) { success, error in
             if success {
@@ -40,13 +47,16 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
     
     // MARK: - Start Workout Session
     func startWorkoutSession() {
+        // Check to make sure it is available on current divice.
         guard HKHealthStore.isHealthDataAvailable(),
               HKQuantityType.quantityType(forIdentifier: .heartRate) != nil else { return }
         
+        // Configure workout
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .other
         configuration.locationType = .unknown
         
+        // Initialize seeion with the previous config. Assign class variables.
         do {
             workoutSession = try HKWorkoutSession(healthStore: healthStore, configuration: configuration)
             workoutSession?.delegate = self
@@ -62,12 +72,15 @@ class HealthKitManager: NSObject, HKWorkoutSessionDelegate {
     }
     
     // MARK: - Stop Workout Session
+    // Ends Workout session.
     func stopWorkoutSession() {
         workoutSession?.end()
         print("⏹ Workout session stopped.")
     }
     
     // MARK: - HKWorkoutSessionDelegate Methods
+    // You do not call these directly, HealthKit automatically calls them when
+    // workout session changes or when an error occurs
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
         switch toState {
         case .running:
