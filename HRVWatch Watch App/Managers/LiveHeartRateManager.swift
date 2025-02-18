@@ -9,21 +9,19 @@ import HealthKit
 class LiveHeartRateManager: NSObject, ObservableObject {
     static let shared = LiveHeartRateManager()
     
-    // Use the shared HealthKitManager instance for HealthKit work.
+    // Use HealthKitManager for all HealthKit interactions.
     private let healthKitManager = HealthKitManager()
     
-    // Track the query anchor and active query.
+    // Track the query's anchor and the active query.
     private var anchor: HKQueryAnchor?
     private var heartRateQuery: HKAnchoredObjectQuery?
     
     @Published var latestHeartRate: Double?
     let hrvCalculator = HRVCalculator()
     
-    /// Starts live heart rate updates using an anchored query.
+    /// Starts live heart rate updates by requesting HealthKit authorization,
+    /// building the query predicate, and executing the anchored query.
     func startLiveUpdates() {
-        // Request HealthKit authorization and configuration.
-        // HealthKitManager.requestAuthorization will enable background delivery
-        // and start a workout session if successful.
         healthKitManager.requestAuthorization { [weak self] success, error in
             guard let self = self else { return }
             guard success else {
@@ -31,53 +29,64 @@ class LiveHeartRateManager: NSObject, ObservableObject {
                 return
             }
             
-            // Build a predicate if on watchOS; otherwise, use nil.
-            #if os(watchOS)
-            // Since the workout session has already started via HealthKitManager,
-            // we assume data starts from now. For more accuracy, HealthKitManager could
-            // expose a workoutStartDate if needed.
-            let startDate = Date()
-            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: nil, options: .strictStartDate)
-            #else
-            let predicate: NSPredicate? = nil
-            #endif
-            
-            // Retrieve the heart rate quantity type.
-            guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else {
-                print("Heart rate type is not available.")
-                return
-            }
+            // Build the query predicate.
+            let predicate = self.buildQueryPredicate()
             
             // Create the anchored query.
-            let query = HKAnchoredObjectQuery(type: heartRateType,
-                                              predicate: predicate,
-                                              anchor: self.anchor,
-                                              limit: HKObjectQueryNoLimit) { [weak self] (query, samples, deletedObjects, newAnchor, error) in
-                guard let self = self else { return }
-                if let error = error {
-                    print("Error in initial live update query: \(error.localizedDescription)")
-                    return
-                }
-                self.anchor = newAnchor
-                self.processSamples(samples)
-            }
-            
-            // Set an update handler to process new samples in real time.
-            query.updateHandler = { [weak self] (query, samples, deletedObjects, newAnchor, error) in
-                guard let self = self else { return }
-                if let error = error {
-                    print("Error in live update query update: \(error.localizedDescription)")
-                    return
-                }
-                self.anchor = newAnchor
-                self.processSamples(samples)
-            }
+            let query = self.createAnchoredQuery(with: predicate)
             
             // Execute the query using HealthKitManager's healthStore.
             self.healthKitManager.healthStore.execute(query)
             self.heartRateQuery = query
             print("Started live heart rate updates.")
         }
+    }
+    
+    /// Helper method to build a predicate for the heart rate query.
+    /// On watchOS, it filters samples from a specific start date.
+    private func buildQueryPredicate() -> NSPredicate? {
+        #if os(watchOS)
+        // If you need to use an accurate start date from the workout session,
+        // consider exposing that from HealthKitManager. Here, we use Date().
+        let startDate = Date()
+        return HKQuery.predicateForSamples(withStart: startDate, end: nil, options: .strictStartDate)
+        #else
+        return nil
+        #endif
+    }
+    
+    /// Helper method to create an anchored query with the provided predicate.
+    private func createAnchoredQuery(with predicate: NSPredicate?) -> HKAnchoredObjectQuery {
+        guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else {
+            fatalError("Heart rate type is not available.")
+        }
+        
+        // Create the query with an initial results handler.
+        let query = HKAnchoredObjectQuery(type: heartRateType,
+                                          predicate: predicate,
+                                          anchor: self.anchor,
+                                          limit: HKObjectQueryNoLimit) { [weak self] (query, samples, deletedObjects, newAnchor, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error in initial live update query: \(error.localizedDescription)")
+                return
+            }
+            self.anchor = newAnchor
+            self.processSamples(samples)
+        }
+        
+        // Set the update handler to process new samples in real time.
+        query.updateHandler = { [weak self] (query, samples, deletedObjects, newAnchor, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error in live update query update: \(error.localizedDescription)")
+                return
+            }
+            self.anchor = newAnchor
+            self.processSamples(samples)
+        }
+        
+        return query
     }
     
     /// Stops the live heart rate updates.
@@ -88,7 +97,6 @@ class LiveHeartRateManager: NSObject, ObservableObject {
             print("Stopped live heart rate updates.")
         }
         #if os(watchOS)
-        // Stop the workout session via HealthKitManager.
         healthKitManager.stopWorkoutSession()
         #endif
     }
@@ -104,7 +112,7 @@ class LiveHeartRateManager: NSObject, ObservableObject {
                 self.hrvCalculator.addBeat(heartRate: heartRate, at: Date())
                 // Evaluate HRV and detect events.
                 EventDetectionManager.shared.evaluateHRV(using: self.hrvCalculator)
-                // Send heart rate data to the paired device.
+                // Send the heart rate data to the paired device.
                 DataSender.shared.sendHeartRateData(heartRate: heartRate)
             }
         }
