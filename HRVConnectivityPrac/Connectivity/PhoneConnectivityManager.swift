@@ -6,12 +6,8 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
 
     @Published var latestHeartRate: Double? = nil
     @Published var isPromptVisible: Bool = false {
-        didSet {
-            print("isPromptVisible updated: \(isPromptVisible)")
-        }
+        didSet { print("isPromptVisible updated: \(isPromptVisible)") }
     }
-    @Published var eventStartTime: Date? = nil
-    @Published var eventEndTime: Date? = nil
     @Published var eventMessage: String? = nil
     @Published var hrvCalculator = HRVCalculator()
 
@@ -25,11 +21,9 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
             print("❌ WCSession is NOT supported on this device")
             return
         }
-        
         let session = WCSession.default
         session.delegate = self
         session.activate()
-
         print("📡 WCSession State: \(session.activationState.rawValue)")
     }
 
@@ -37,14 +31,15 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
 
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
-            print("iPhone WCSession activation error: \(error.localizedDescription)")
+            print("iOS WCSession activation error: \(error.localizedDescription)")
         } else {
-            print("iPhone WCSession activated with state: \(activationState.rawValue)")
+            print("iOS WCSession activated with state: \(activationState.rawValue)")
         }
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
         DispatchQueue.main.async {
+            print("iOS received message: \(message)")
             if let heartRate = message["HeartRate"] as? Double {
                 self.latestHeartRate = heartRate
                 self.hrvCalculator.addBeat(heartRate: heartRate, at: Date())
@@ -55,14 +50,17 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
                 isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
                 if let eventIDString = message["EventID"] as? String,
                    let startTimeString = message["StartTime"] as? String,
-                   let endTimeString = message["EndTime"] as? String,
-                   let eventID = UUID(uuidString: eventIDString),
-                   let startTime = isoFormatter.date(from: startTimeString),
-                   let endTime = isoFormatter.date(from: endTimeString) {
-                    let event = Event(id: eventID, startTime: startTime, endTime: endTime, isConfirmed: nil)
-                    // Update the shared event manager:
-                    EventDetectionManager.shared.events.append(event)
-                    print("Received event from Watch: \(eventID)")
+                   let endTimeString = message["EndTime"] as? String {
+                    print("Received event strings - EventID: \(eventIDString), StartTime: \(startTimeString), EndTime: \(endTimeString)")
+                    if let eventID = UUID(uuidString: eventIDString),
+                       let startTime = isoFormatter.date(from: startTimeString),
+                       let endTime = isoFormatter.date(from: endTimeString) {
+                        let event = Event(id: eventID, startTime: startTime, endTime: endTime, isConfirmed: nil)
+                        EventDetectionManager.shared.events.append(event)
+                        print("Received event from Watch: \(eventID)")
+                    } else {
+                        print("Date parsing failed for event message: \(message)")
+                    }
                 } else {
                     print("Failed to parse event data from message: \(message)")
                 }
@@ -75,19 +73,15 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
             print("Watch is not reachable")
             return
         }
-
         let response: [String: Any] = [
             "Event": "EventHandled",
             "EventID": event.id.uuidString,
             "IsConfirmed": isConfirmed
         ]
-
         WCSession.default.sendMessage(response, replyHandler: nil) { error in
             print("Failed to send user response to watch: \(error.localizedDescription)")
         }
-
         DispatchQueue.main.async {
-            // Remove event from the shared event manager.
             EventDetectionManager.shared.events.removeAll { $0.id == event.id }
             print("Event \(event.id) \(isConfirmed ? "confirmed" : "dismissed") and removed.")
         }
@@ -107,7 +101,6 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
             print("Watch is not reachable")
             return
         }
-        
         let modeMessage: [String: Any] = ["isMockMode": isMockMode]
         WCSession.default.sendMessage(modeMessage, replyHandler: nil) { error in
             print("Failed to send mode change: \(error.localizedDescription)")
