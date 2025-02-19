@@ -2,9 +2,7 @@ import HealthKit
 import WatchConnectivity
 import SwiftUI
 
-#if os(watchOS)
 import HealthKit
-#endif
 
 class LiveHeartRateManager: NSObject, ObservableObject {
     static let shared = LiveHeartRateManager()
@@ -45,14 +43,10 @@ class LiveHeartRateManager: NSObject, ObservableObject {
     // Helper method to build a predicate for the heart rate query.
     // On WatchOS,it filters samples from a specific start date.
     private func buildQueryPredicate() -> NSPredicate? {
-        #if os(watchOS)
         // If you need to use an accurate start date from the workout session,
         // consider exposing that from HealthKitManager. Here, we use Date().
         let startDate = Date()
         return HKQuery.predicateForSamples(withStart: startDate, end: nil, options: .strictStartDate)
-        #else
-        return nil
-        #endif
     }
     
     // Helper method to create an anchored query with the predicate.
@@ -99,9 +93,7 @@ class LiveHeartRateManager: NSObject, ObservableObject {
             heartRateQuery = nil
             print("Stopped live heart rate updates.")
         }
-        #if os(watchOS)
         healthKitManager.stopWorkoutSession()
-        #endif
     }
     
     // Processes the recieved heart rate samples.

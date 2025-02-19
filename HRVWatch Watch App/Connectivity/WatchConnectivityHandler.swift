@@ -38,12 +38,6 @@ class WatchConnectivityHandler: NSObject, WCSessionDelegate, ObservableObject {
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         DispatchQueue.main.async {
-            // Handle a mode change message:
-            if let mode = message["isMockMode"] as? Bool {
-                print("Received mode change: \(mode ? "Mock" : "Live")")
-                DataModeManager.shared.isMockMode = mode
-            }
-            
             // Handle an event-handled message:
             if let eventAction = message["Event"] as? String, eventAction == "EventHandled",
                let eventID = message["EventID"] as? String,

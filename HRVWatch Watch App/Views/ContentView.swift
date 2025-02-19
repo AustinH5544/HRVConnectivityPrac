@@ -3,7 +3,6 @@ import HealthKit
 
 struct ContentView: View {
     // HealthKitManager handles authorization and workout session.
-    private let healthKitManager = HealthKitManager()
     
     // Live heart rate data.
     @ObservedObject var liveHeartRateManager = LiveHeartRateManager.shared

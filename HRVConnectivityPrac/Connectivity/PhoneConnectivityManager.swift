@@ -28,7 +28,6 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     }
 
     // MARK: - WCSessionDelegate Methods
-
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
             print("iOS WCSession activation error: \(error.localizedDescription)")
@@ -94,17 +93,5 @@ class PhoneConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     func sessionDidDeactivate(_ session: WCSession) {
         print("WCSession deactivated")
         WCSession.default.activate()
-    }
-    
-    func sendModeChange(isMockMode: Bool) {
-        guard WCSession.default.isReachable else {
-            print("Watch is not reachable")
-            return
-        }
-        let modeMessage: [String: Any] = ["isMockMode": isMockMode]
-        WCSession.default.sendMessage(modeMessage, replyHandler: nil) { error in
-            print("Failed to send mode change: \(error.localizedDescription)")
-        }
-        print("Sent mode change: \(isMockMode ? "Mock" : "Live")")
     }
 }
